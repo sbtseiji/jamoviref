@@ -1,0 +1,30 @@
+bookdown::gitbook:
+  css: style.css
+  split_by: section
+  includes:
+    in_header: mathjax.html
+  config:
+    toc:
+      before: |
+        <li><a href="./">jamoviリファレンス（Analysis編）</a></li>
+      after: |
+        <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
+#    download: ["pdf"]
+    sharing:
+      facebook: yes
+      twitter: yes
+      google: no
+      weibo: no
+      instapper: no
+      vk: no
+#bookdown::pdf_book:
+#  includes:
+#    in_header: preamble.tex
+#  dev: "quartz_pdf"
+#  latex_engine: lualatex
+#  citation_package: natbib
+#  keep_tex: yes
+#  pandoc_args: --top-level-division=chapter
+
+#bookdown::epub_book:
+#  dev: svglite

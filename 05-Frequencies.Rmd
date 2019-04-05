@@ -1,0 +1,16 @@
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+```
+
+# Frequencies（度数）{#ch:frequencies}
+
+## One Sample Proportion Tests（１標本の比率検定）{-}
+## 2 Outcomes [Binomial test]（二項検定）{#sec:frequencies-binomial}
+## N Outcomes [χ² Goodness of fit]（χ²適合度検定）{#sec:frequencies-gof}
+
+## Contingency Tables（クロス集計表の検定）{-}
+## Independent Samples [χ² test of association]（χ²独立性検定）{#sec:frequencies-chisq}
+## Paired Samples [McNemar test]（マクニマー検定）{#sec:frequencies-mcnemar}
+
+## その他
+## Log-Linear Regression（対数線形回帰）

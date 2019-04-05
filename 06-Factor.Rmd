@@ -1,0 +1,13 @@
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+```
+
+# Factor（因子分析）{#ch:factor}
+
+## Scale Analysis（尺度分析）{-}
+## Reliability Analysis（信頼性分析）{#sec:factor-reliability}
+
+## Data Reduction（データ縮約）{-}
+## Principal Component Analysis（主成分分析）{#sec:factor-pca}
+## Exploratory Factor Analysis（探索的因子分析）{#sec:factor-efa}
+## Confirmatory Factor Analysis（確認的因子分析）{#sec:factor-cfa}

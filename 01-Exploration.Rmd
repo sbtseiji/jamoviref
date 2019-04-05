@@ -1,0 +1,7 @@
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+```
+
+# Exploration（探索）{#ch:exploration}
+
+## Descriptives（記述統計量）{#sec:exploration-descriptives}

@@ -1,0 +1,9 @@
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+```
+
+# T-Tests（t検定）{#ch:ttests}
+
+## Independent Samples T-Test（独立標本ｔ検定）{#sec:ttests-independent}
+## Paired Samples T-Test（対応ありｔ検定）{#sec:ttests-paired}
+## One Sample T-Test（１標本ｔ検定）{#sec:ttests-one}

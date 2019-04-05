@@ -1,0 +1,15 @@
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+```
+
+# Regression（回帰分析）{#ch:regression}
+
+## Correlation Matrix（相関行列）{#sec:regression-correlation}
+## Linear Regression（線形回帰分析）{#sec:regression-regression}
+
+## Logistic Regression（ロジスティック回帰）{-}
+## 2 Outcomes [Binomial]（２項ロジスティック回帰）{#sec:regression-binom}
+## N Outcomes [Multinomial]（多項ロジスティック回帰）{#sec:regression-multinom}
+## Ordinal Outcomes（順序ロジスティック回帰）{#sec:regression-ordinal}
+
+

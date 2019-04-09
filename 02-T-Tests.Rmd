@@ -1,9 +1,132 @@
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+require(ggplot2); require(ggplotify); require(cowplot);require(magick)
+source( "snippets/macros.R" )
 ```
 
 # T-Tests（t検定）{#ch:ttests}
 
+*ｔ検定*は，２群の平均値の差の検定としてもっとも一般的に用いられる分析手法です。このメニューでは，データの形式に応じて複数の手法を使い分けることができます。
+
 ## Independent Samples T-Test（独立標本ｔ検定）{#sec:ttests-independent}
+
+独立標本ｔ検定では，「２つの標本の平均値が同じである」という帰無仮説について検定を行います。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまり平均値に差がある）可能性が高いことを示します。
+
+*スチューデントの独立標本ｔ検定*は，２つの標本がともに正規分布の母集団から得られたものであり，かつその分散が等しいことを仮定しています。２標本の分散が等しいという仮定を用いるのが適切でないと考えられる場合には，*ウェルチのｔ検定*を使用することができます。また，２つの標本がどちらも正規分布の母集団から得られたものであるという仮定が不適切であると考えられる場合には，ノンパラメトリック検定である*マン・ホイットニー検定*を使用することもできます。ただし，マン・ホイットニー検定の帰無仮説は「両標本が同じ母集団から抽出されたものである」であり，ｔ検定とはやや異なります。
+
+```{r ttests-independent, fig.cap='**Independent Samples T-Test**'}
+p <- image_read("imgs/02-ttests-independent.png")
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+17+52")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+275+62")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+275+190")
+p
+```
+
+1. `r varlist_li`
+2. `r depvar_li`
+3. `r groupvar_li`
++ `r tests_li`
+    - `r student_li`
+      + `r bayes_li`
+    - `r welch_li`
+    - `r manU_li`
+
++ `r hypothesis_li`  
+    - **Group 1 ≠ Group 2**　グループ１と２の平均値の差が０でないと言えるかどうかについて，*両側検定*による検定を行います。
+    - **Group 1 > Group 2**　グループ１の平均値がグループ２の平均値より有意に高いと言えるかどうかについて，*片側検定*による検定を行います。
+    - **Group 1 < Group 2**　グループ１の平均値がグループ２の平均値より有意に低いと言えるかどうかについて，*片側検定*による検定を行います。
+
++ `r missing.values_li`
+    - `r missing.pairwise_li`
+    - `r missing.listwise_li`
+`r missing.note_li`
+
++ `r additional.statistics_li`
+    - `r additional.mean.difference_li`
+    - `r additional.es_li`
+    - `r additional.ci_li`
+    - `r addtional.descriptives_li`
+    - `r additional.plots_li`
+
++ `r assumption.checks_li`
+    - `r assumption.shapiro_li`  
+    - `r assumption.qq_li`  
+    - `r assumption.levene_li`
+
 ## Paired Samples T-Test（対応ありｔ検定）{#sec:ttests-paired}
+
+*スチューデントの対応ありｔ検定*は，「ペアとなる測定値の差がゼロに等しい」という帰無仮説について検定を行います。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまりペアとなる測定値の差はゼロでない）可能性が高いことを示します。
+
+スチューデントの対応ありｔ検定は，ペアとなる測定値の差が正規分布に従うことを仮定しています。この仮定を置くことが不適切と考えられる場合には，ノンパラメトリック検定である*ウィルコクソンの符号順位検定*を使用することができます。ただし，ウィルコクソンの符号順位検定の帰無仮説は「２グループの代表値は同じである」であり，ｔ検定とはやや異なります。
+
+
+```{r ttests-paired, fig.cap='**Paired Samples T-Test**'}
+p <- image_read("imgs/02-ttests-paired.png")
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+20+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
+p
+```
+
+1. `r varlist_li`
+2. **Paired Variables**（ペア変数）　分析対象となる変数のペアを指定します。　※*連続型*変数のみ  
+ペア変数間の差は，左側の変数の値から右側の変数の値を引く形で算出されます。
+
++ `r tests_li`
+    - `r student_li`
+       + `r bayes_li`
+    - `r wilcox_li`
+
++ **Hypothesis**（仮説）　検定の仮説を指定します。
+    - **Measure 1 ≠ Measure 2**　測定値１と測定値２の平均値の差が０でないと言えるかどうかについて，*両側検定*による検定を行います。
+    - **Measure 1 > Measure 2**　測定値１の平均値が測定値２の平均値より有意に高いと言えるかどうかについて，*片側検定*による検定を行います。
+    - **Measure 1 < Measure 2**　測定値１の平均値が測定値２の平均値より有意に低いと言えるかどうかについて，*片側検定*による検定を行います。
+
++ `r additional.statistics_li`
+    - `r additional.mean.difference_li`
+    - `r additional.es_li`
+    - `r additional.ci_li`
+    - `r addtional.descriptives_li`
+    - `r additional.plots_li`
+
++ `r assumption.checks_li`
+    - `r assumption.shapiro_li`  
+    - `r assumption.qq_li`
+
 ## One Sample T-Test（１標本ｔ検定）{#sec:ttests-one}
+*スチューデントの１標本ｔ検定*は，「真の平均値が特定の値（多くの場合「ゼロ」）に等しい」という帰無仮説について検定します。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまり真の平均値は指定した値とは異なる）可能性が高いことを示します。
+
+スチューデントの１標本ｔ検定は，データが正規分布から抽出されていることを前提としています。この仮定が適切でないと考えられる場合には，ノンパラメトリック検定である*ウィルコクソン符号順位検定*を使用することもできます。ただし，ウィルコクソンの符号順位検定の帰無仮説は「中央値が特定の値に等しい」であり，ｔ検定とはやや異なります。
+
+
+```{r ttests-one, fig.cap='**One Sample T-Test**'}
+p <- image_read("imgs/02-ttests-one.png")
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+20+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
+p
+```
+
+1. `r varlist_li`
+1. `r depvar_li`
+ペア変数間の差は，左側の変数の値から右側の変数の値を引く形で算出されます。
+
++ `r tests_li`
+    - `r student_li`
+       + `r bayes_li`
+    - `r wilcox_li`
+
++ **Hypothesis**（仮説）　検定の仮説を指定します。
+    - **Test Value**（基準値）　平均値の比較対照となる基準値を設定します。初期値は「０」です。
+    - **Measure 1 ≠ Measure 2**　従属変数の平均値が指定した基準値と異なると言えるかどうかについて，*両側検定*による検定を行います。
+    - **Measure 1 > Measure 2**　従属変数の平均値が指定した基準値より有意に高いと言えるかどうかについて，*片側検定*による検定を行います。
+    - **Measure 1 < Measure 2**　従属変数の平均値が指定した基準値より有意に低いと言えるかどうかについて，*片側検定*による検定を行います。
+
++ `r additional.statistics_li`
+    - `r additional.mean.difference_li`
+    - `r additional.es_li`
+    - `r additional.ci_li`
+    - `r addtional.descriptives_li`
+    - `r additional.plots_li`
+
++ `r assumption.checks_li`
+    - `r assumption.shapiro_li`
+    - `r assumption.qq_li`

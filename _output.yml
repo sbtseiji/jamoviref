@@ -6,7 +6,7 @@ bookdown::gitbook:
   config:
     toc:
       before: |
-        <li><a href="./">jamoviリファレンス（Analysis編）</a></li>
+        <li><a href="./">jamoviクイックガイド（Analysis編）</a></li>
       after: |
         <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
 #    download: ["pdf"]
@@ -24,7 +24,10 @@ bookdown::gitbook:
 #  latex_engine: lualatex
 #  citation_package: natbib
 #  keep_tex: yes
-#  pandoc_args: --top-level-division=chapter
+  pandoc_args: 
+    - "--top-level-division=chapter"
+    - "--filter"
+    - "pandoc-aozora-ruby-filter"
 
 #bookdown::epub_book:
 #  dev: svglite

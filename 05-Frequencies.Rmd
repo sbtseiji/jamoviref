@@ -1,16 +1,283 @@
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+require(ggplot2); require(ggplotify); require(cowplot);require(magick)
+source( "snippets/macros.R" )
 ```
 
 # Frequencies（度数）{#ch:frequencies}
 
-## One Sample Proportion Tests（１標本の比率検定）{-}
+このメニューには，*度数*および*比率*の検定に関するさまざまな手法がまとめられています。
+
+## **One Sample Proportion Tests**（１標本の比率検定）{-}
+
 ## 2 Outcomes [Binomial test]（二項検定）{#sec:frequencies-binomial}
+
+*二項検定*は，「観測値の比率が期待値に一致する」という帰無仮説を検定するために用いられます。分析の結果小さなｐ値が得られた場合，帰無仮説が誤りである（つまり真の比率は期待値とは異なるものである）可能性が高くなります。
+
+```{r frequencies-binom, fig.cap='**Binomial test**'}
+p <- image_read('imgs/05-frequencies-binom.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+55")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+5+271")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+5+296")
+p
+```
+1. `r varlist_li`
+2. `r depvar.freq_li`
+3. **Values are counts**（値を度数として使用）　データシートに入力されている値がすでに度数集計済みのものである場合はここにチェックを入れます。
+4. `r testvalue_li`
+
++ `r hypothesis_li`
+	- **≠ Test value**　観測値の比率が基準値と異なるといえるかどうかを検定します（両側検定）。
+	- **> Test value**　観測値の比率が基準値よりも大きいと言えるかどうかを検定します（片側検定）。
+	- **< Test value**　観測値の比率が基準値よりも小さいと言えるかどうかを検定します（片側検定）。
+
++ `r additional.statistics_li`
+    - `r additional.ci_li`
+
++ `r baysian.statistics_li`
+
+### Bayesian Statistics（ベイズ統計量）
+
+`r baysian.statistics_txt`
+
+```{r frequencies-binom-bayes, fig.cap='**Bayesian Statistics**'}
+p <- image_read('imgs/05-frequencies-binom-bayes.png')
+p
+```
+
++ `r bayes.prior_li `
+	- `r bayes.prior.a_li`
+	- `r bayes.prior.b_li`
++ `r bayes.plots_li`
+	- `r bayes.plots.posterior_li`
++ `r bayes.statistics_li`
+	- `r bayes.statistics.factor_li`
+	- `r bayes.statistics.intervals_li`
+
 ## N Outcomes [χ² Goodness of fit]（χ²適合度検定）{#sec:frequencies-gof}
 
-## Contingency Tables（クロス集計表の検定）{-}
+```{r frequencies-gof, fig.cap='**χ² Goodness of fit**'}
+p <- image_read('imgs/05-frequencies-gof.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+55")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+123")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+5+271")
+p
+```
+1. `r varlist_li`
+2. `r depvar.freq2_li`
+3. `r counts_li`
+4. `r expected_li`
++ `r expected.prop_li`
+
+### Expected Proportions（期待比）
+`r expected.prop_txt`
+```{r frequencies-gof-expected, fig.cap='**Expected Proportions**'}
+p <- image_read('imgs/05-frequencies-gof-expected.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+73+43")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+285+43")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+430+43")
+p
+```
+
+1. **Level**（水準）　データに含まれる測定値の水準です。この値は編集できません。
+2. **Ratio**（比）　検定に使用する期待比を指定します。初期値はすべて１です。
+3. **Proportion**（比率）　②の期待比を全体を１とする比率に換算した値です。この値は編集できません。
+
+## **Contingency Tables**（クロス集計表の検定）{-}
+
+
 ## Independent Samples [χ² test of association]（χ²独立性検定）{#sec:frequencies-chisq}
+
+*χ²独立性検定*（χ²適合度検定と混同しないようにしてください）は，２種類のカテゴリ変数が独立であるか関連しているかを調べる場合に使用される検定です。分析の結果小さいｐ値が得られた場合，その２つの変数は独立でない（互いに関連がある）可能性が高くなります。
+
+```{r frequencies-chisq, fig.cap='**χ² test of association**'}
+p <- image_read('imgs/05-frequencies-chisq.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+303+94")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+303+142")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+303+193")
+p <- image_annotate(p,'⑤', size=14,color='red', font = 'Calibri',location = "+303+243")
+p
+```
+1. `r varlist_li`
+1. `r rows_li`
+1. `r cols_li`
+1. `r counts_li`
+1. `r layers_li`
++ `r statistics_li`
++ `r cells_li`
+
+### Statistics（統計量）
+`r statistics_txt`
+
+```{r frequencies-chisq-statistics, fig.cap='**Statistics**'}
+p <- image_read('imgs/05-frequencies-chisq-statistics.png')
+p
+```
+
++ `r statistics_tests_li`
+	- `r statistics_tests.chisq_li`
+	- `r statistics_tests.chisq.cont_li`
+	- `r statistics_tests.lr_li`
+	- `r statistics_tests.fisher_li`
+
++ `r statistics_nominal_li`
+	- `r statistics_nominal.coeff_li`
+	- `r statistics_nominal.cramer_li`
+
++ `r statistics_comparative_li`
+	- `r statistics_comparative.logOR_li`
+	- `r statistics_comparative.OR_li`
+	- `r statistics_comparative.RR_li`
+	- `r additional.ci_li`
+
++ `r statistics_ordinal_li`
+	- `r statistics_ordinal.gamma_li`
+	- `r statistics_ordinal.kendall_li`
+
+
+
+
+### Cells（セル）
+`r cells_txt`
+
+```{r frequencies-chisq-cells, fig.cap='**Cells**'}
+p <- image_read('imgs/05-frequencies-chisq-cells.png')
+p
+```
+
++ `r cells.counts_li`
+	- `r cells.counts.observed_li`
+	- `r cells.counts.expected_li`
+
++ `r cells.percentages_li`
+	- `r cells.percentages.row_li`
+	- `r cells.percentages.col_li`
+	- `r cells.percentages.total_li`
+
+
 ## Paired Samples [McNemar test]（マクニマー検定）{#sec:frequencies-mcnemar}
 
-## その他
+```{r frequencies-mcnemar, fig.cap='**McNemar test**'}
+p <- image_read('imgs/05-frequencies-mcnemar.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+15+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+303+94")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+303+142")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+303+193")
+p <- image_annotate(p,'⑤', size=14,color='red', font = 'Calibri',location = "+5+271")
+p <- image_annotate(p,'⑥', size=14,color='red', font = 'Calibri',location = "+5+297")
+p <- image_annotate(p,'⑦', size=14,color='red', font = 'Calibri',location = "+5+322")
+p
+```
+1. `r varlist_li`
+1. `r rows_li`
+1. `r cols_li`
+1. `r counts_li`
+1. `r statistics_tests.chisq_li`
+1. `r statistics_tests.chisq.cont_li`
+1. **Log odds ratio exact**（正確対数オッズ比）　正確（exact）*対数オッズ比*を算出します。
+
++ `r cells.percentages_li`
+	- `r cells.percentages.row_li`
+	- `r cells.percentages.col_li`
+
+## その他 {-}
 ## Log-Linear Regression（対数線形回帰）
+
+*対数線形回帰*は，クロス集計表の各セルの期待値を対数変換したうえで，それらが説明変数（独立変数）の主効果や交互作用による影響をどのように受けているかを検討します。「回帰」という名前がついていますが，*χ²適合度検定*や*χ²独立性検定*と同じく度数データの分析手法です。
+
+```{r frequencies-loglin, fig.cap='**Log-Linear Regression**'}
+p <- image_read('imgs/05-frequencies-loglin.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+18+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+192")
+p
+```
+1. `r varlist_li`
+2. `r factor.log_li`
+3. `r counts.0_li`
++ `r builder_li`
++ `r reference_li`
++ `r modelfit_li`
++ `r modelcoeff_li`
++ `r marginal_li`
+
+### Model Builder（モデルビルダー）
+`r builder_txt`
+
+```{r frequencies-loglin-builder, fig.cap='**Model Builder**'}
+p <- image_read('imgs/05-frequencies-loglin-builder.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
+p
+```
+
+1. `r model.predictors_li`
+1. `r model.blocks_li`
+1. `r model.rarrow_li`
+1. `r model.triarrow_li`
+
+### Reference Levels（参照水準）
+`r reference_txt`
+
+```{r frequencies-loglin-reference, fig.cap='**Reference Levels**'}
+p <- image_read('imgs/05-frequencies-loglin-reference.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
+p
+```
+
+1. `r ref.var_li`
+1. `r ref.level_li`
+
+### Model Fit（モデル適合度）
+`r modelfit_txt`
+
+```{r frequencies-loglin-modelfit, fig.cap='**Model Fit**'}
+p <- image_read('imgs/05-frequencies-loglin-modelfit.png')
+p
+```
+
++ `r modelfit.measures_li`
+    - `r modelfit.measures.deviance_li`
+    - `r modelfit.measures.aic_li`
+    - `r modelfit.measures.bic_li`
+    - `r modelfit.measures.overall_li`
+
++ `r modelfit.pseudo.R2_li`
+    - `r modelfit.pseudo.R2.mcfadden_li`
+    - `r modelfit.pseudo.R2.cox_li`
+    - `r modelfit.pseudo.R2.nagelkerke_li`
+
+### Model Coefficients（モデル係数）
+`r modelcoeff_txt`
+
+```{r frequencies-loglin-coeff, fig.cap='**Model Coefficients**'}
+p <- image_read('imgs/05-frequencies-loglin-coeff.png')
+p
+```
+
++ `r modelcoeff.omnibus_li`
+	- `r modelcoeff.omnibus.likelihood_li`
++ `r modelcoeff.estimate.log_li`
+	- `r additional.ci_li`
++ `r odds.ratio_li`
+	- `r odds.ratio.ratio_li`
+	- `r additional.ci_li`
+
+### Estimated Marginal Means（推定周辺平均）
+`r marginal_txt`
+
+```{r frequencies-loglin-marginal, fig.cap='**Estimated Marginal Means**'}
+p <- image_read('imgs/05-frequencies-loglin-marginal.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location  = "+30+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+40")
+p
+```
+```{r, results="asis"}
+cat(readLines('snippets/MarginalMeans-reg.md'), sep = '\n')
+```

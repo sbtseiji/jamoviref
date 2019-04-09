@@ -1,0 +1,30 @@
+```{r, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%',results="asis")
+require(ggplot2); require(ggplotify); require(cowplot);require(magick)
+source( "suppl/suppl.R" )
+```
+
+# 付録 {-}
+
+## Plots（作図）{-}
+
+#### <a name="gl:plothistogram">ヒストグラム</a> {-}
+
+#### <a name="gl:plot-density">密度曲線</a> {-}
+
+#### <a name="gl:plot-qq">Q-Qプロット</a> {-}
+
+#### <a name="gl:plot-box">箱ひげ図（ボックスプロット）</a> {-}
+
+箱の上端は75%点，下端は25%点，箱中央のラインが50%点（中央値）を示します。また，四分位範囲の1.5倍以上の値は*外れ値*として点で表されます。ひげ（直線）の上端は外れ値を除く最大値，下端は外れ値を除く最小値です。
+
+#### <a name="gl:plot-violin">バイオリン図</a> {-}
+
+#### <a name="gl:plot-bar">棒グラフ</a> {-}
+
+## Glossary（用語集）{-}
+
+```{r}
+#cat(gl.mean,sep = '\n')
+```
+

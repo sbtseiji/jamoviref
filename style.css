@@ -1,0 +1,56 @@
+.center { margin: 0 auto; width: 600px; }
+
+p.caption {
+  color: #777;
+  margin-top: 10px;
+  font-size: 0.9em !important;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+
+em {
+color: crimson;
+font-style: normal !important;	
+font-weight: bold;
+}
+
+rt{
+	font-size: 0.5em !important;
+}
+
+
+.exercise {
+    position: relative  !important;
+	margin: 2em .5em 2em 0.5em;
+	padding: 0.5em 0.5em 0.5em 3em;
+	border: 3px solid #3d6ca8;
+}
+
+
+.exercise:before {
+	content: "練習";
+	display: block;
+	position: absolute;
+	top: 0em;
+	left: 0em;
+	font-size: .8em;
+	font-weight: bold;
+	color: white;
+	background-color: #3d6ca8;
+	padding-left: .5em;
+	padding-right: .5em;
+}
+
+.footnotes {
+	font-size: 0.9em !important;
+}
+
+img[alt=inline] { height: 2ex; }

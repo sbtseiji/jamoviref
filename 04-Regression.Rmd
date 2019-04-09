@@ -1,15 +1,475 @@
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+require(ggplot2); require(ggplotify); require(cowplot);require(magick)
+source( "snippets/macros.R" )
 ```
 
+
 # Regression（回帰分析）{#ch:regression}
+*回帰分析*は，変数間の相関関係を利用して，１つあるいは複数の変数（*説明変数*）から，関心対象の変数（*目的変数*）を説明するモデルを作成します。このメニューでは，目的変数の種類に応じて複数の回帰分析を使い分けることできます。
+
 
 ## Correlation Matrix（相関行列）{#sec:regression-correlation}
+*相関行列*は，２つ以上の*連続型*変数間の線形関係を検討するための方法です。与えられた変数を用いて変数ペアを作成し，それぞれの変数ペアに対して*相関係数*を算出します。相関係数は２変数間の関係の強さと方向を表す指標です。正の相関係数は*正の相関関係*（一方の変数の値が大きいほどもう一方の値も大きい）があることを意味し，相関係数が負の値の場合には*負の相関関係*（一方の変数の値が大きいほどもう一方の値も小さい）があることを意味します。相関係数がゼロの場合は，２変数間に関連がない（一方の変数の値の大小からは，もう一方の値の大小について何もわからない）ことを意味します。
+
+それぞれの相関係数については，「相関係数がゼロである」という帰無仮説を用いて検定を行い，ｐ値を算出することができます。このｐ値が低い場合には，相関係数がゼロではない，つまり２変数間に線形（あるいはより複雑な）関係があるという可能性が高いことを意味します。
+
+```{r regression-cormat, fig.cap='**Corrilation Matrix**'}
+p <- image_read('imgs/04-regression-cormat.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+55")
+p
+```
+1. `r varlist_li`
+1. `r corvar_li`
++ **Correlation Coefficients**（相関係数）　算出する相関係数の種類を指定します。
+	- **Pearson**（ピアソン）　*ピアソンの積率相関係数*を算出します。
+	- **Spearman**（スピアマン）　*スピアマンの順位相関係数*を算出します。
+	- **Kendall's tau-b**（ケンドールのτ-ｂ）　*ケンドールの順位相関係数*を算出します。
+
++ `r hypothesis_li`
+	- **Correlated**（相関）　有意な相関があるかどうかを検定します。
+	- **Correlated positively**（正の相関）　有意な正の相関があるかどうかを検定します。
+	- **Correlated negatively**（負の相関）　有意な負の相関があるかどうかを検定します。
+
++  **Additional Options**（その他のオプション）
+	- **Report significance**（有意確率の報告）　相関係数の有意確率を報告します。
+	- `r additional.corr.flag_li`
+	- `r additional.ci_li`
+
++ **Plot**（作図）
+	- **Correlation matrix**（相関行列）　*相関行列プロット*を作成します。
+		+ **Densities for variables**（変数の密度）　相関行列プロットに密度グラフをあわせて表示します。
+		+ **Statistics**（統計量） 　相関行列プロットに相関係数を表示します。
+
 ## Linear Regression（線形回帰分析）{#sec:regression-regression}
 
-## Logistic Regression（ロジスティック回帰）{-}
-## 2 Outcomes [Binomial]（２項ロジスティック回帰）{#sec:regression-binom}
-## N Outcomes [Multinomial]（多項ロジスティック回帰）{#sec:regression-multinom}
-## Ordinal Outcomes（順序ロジスティック回帰）{#sec:regression-ordinal}
+*線形回帰分析*は，*連続型*の従属変数（*目的変数*）と１つあるいは複数の独立変数（*説明変数*）の関係を検討するための分析手法です。線形回帰分析は，数理的には*分散分析*や*共分散分析*と同じものです。なお，線形回帰分析では残差（誤差）が正規分布することが前提となっており，目的変数に*名義型*や*順序型*の変数を使用することはできません。目的変数が*名義型*や*順序型*の場合には，*ロジスティック回帰*を使用することができます。
 
+```{r regression-linear, fig.cap='**Linear Regression**'}
+p <- image_read('imgs/04-regression-linear.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
+p
+```
+
+1. `r varlist_li`
+1. `r depvar.reg_li`
+1. `r covar.reg_li`
+1. `r factor.reg_li`
+
++ `r builder_li`
++ `r reference_li`
++ `r assumption.checks_li`
++ `r modelfit_li`
++ `r modelcoeff_li`
++ `r marginal_li`
+
+### Model Builder（モデルビルダー）
+`r builder_txt`
+
+```{r regression-linear-builder, fig.cap='**Model Builder**'}
+p <- image_read('imgs/04-regression-linear-builder.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
+p
+```
+
+1. `r model.predictors_li`
+1. `r model.blocks_li`
+1. `r model.rarrow_li`
+1. `r model.triarrow_li`
+
+### Reference Levels（参照水準）
+`r reference_txt`
+
+```{r regression-linear-reference, fig.cap='**Reference Levels**'}
+p <- image_read('imgs/04-regression-linear-reference.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
+p
+```
+
+1. `r ref.var_li`
+1. `r ref.level_li`
+
+### Assumption Checks（前提条件チェック）
+
+`r assumption_txt`
+
+```{r regression-linear-assumption, fig.cap='**Assumption Checks**'}
+p <- image_read('imgs/04-regression-linear-assumption.png')
+p
+```
+
++ `r assumption.checks_li`
+    - `r assumption.autocorr.test_li`
+    - `r assumption.collinearity_li`
+    - `r assumption.qq.res_li`
+    - `r assumption.res.plots_li`
+
++ `r data.summary_li`
+    - `r data.summary.cook_li`
+
+### Model Fit（モデル適合度）
+`r modelfit_txt`
+
+```{r regression-linear-modelfit, fig.cap='**Model Fit**'}
+p <- image_read('imgs/04-regression-linear-modelfit.png')
+p
+```
+
++ `r modelfit.measures_li`
+    - `r modelfit.measures.r_li`
+    - `r modelfit.measures.r2_li`
+    - `r modelfit.measures.adjstr_li`
+    - `r modelfit.measures.aic_li`
+    - `r modelfit.measures.bic_li`
+    - `r modelfit.measures.rmse_li`
+
++ `r modelfit.overall_li`
+    - `r modelfit.f_li`
+
+### Model Coefficients（モデル係数）
+`r modelcoeff_txt`
+
+```{r regression-linear-coeff, fig.cap='**Model Coefficients**'}
+p <- image_read('imgs/04-regression-linear-coeff.png')
+p
+```
+
++ `r modelcoeff.omnibus_li`
+	- `r modelcoeff.omnibus.anova_li`
++ `r modelcoeff.estimate_li`
+	- `r additional.ci_li`
++ `r modelcoeff.std.estimate_li`
+	- `r modelcoeff.std.estimate.coeff_li`
+	- `r additional.ci_li`
+
+### Estimated Marginal Means（推定周辺平均）
+`r marginal_txt`
+
+```{r regression-linear-marginal, fig.cap='**Estimated Marginal Means**'}
+p <- image_read('imgs/04-regression-linear-marginal.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location  = "+30+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+40")
+p
+```
+```{r, results="asis"}
+cat(readLines('snippets/MarginalMeans-reg.md'), sep = '\n')
+```
+
+
+## **Logistic Regression**（ロジスティック回帰）{-}
+*ロジスティック回帰*は，回帰モデルの目的変数が*名義型*や*順序型*の場合に使用される分析手法です。さらに目的変数の種類により，複数の手法が使い分けられます。
+
+## 2 Outcomes [Binomial]（２項ロジスティック回帰）{#sec:regression-binom}
+*２項ロジスティック回帰*は，回帰モデルの目的変数が「はい・いいえ」などの２値変数の場合に使用される分析手法です。
+
+```{r regression-binom, fig.cap='**Logistic Regression**'}
+p <- image_read('imgs/04-regression-binom.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
+p
+```
+
+1. `r varlist_li`
+1. `r depvar.nom_li`
+1. `r covar.reg_li`
+1. `r factor.reg_li`
+
++ `r builder_li`
++ `r reference_li`
++ `r assumption.checks_li`
++ `r modelfit_li`
++ `r modelcoeff_li`
++ `r marginal_li`
++ `r prediction_li`
+
+### Model Builder（モデルビルダー）
+`r builder_txt`
+
+```{r regression-binom-builder, fig.cap='**Model Builder**'}
+p <- image_read('imgs/04-regression-binom-builder.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
+p
+```
+
+1. `r model.predictors_li`
+1. `r model.blocks_li`
+1. `r model.rarrow_li`
+1. `r model.triarrow_li`
+
+### Reference Levels（参照水準）
+`r reference_txt`
+
+```{r regression-binom-reference, fig.cap='**Reference Levels**'}
+p <- image_read('imgs/04-regression-binom-reference.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
+p
+```
+
+1. `r ref.var_li`
+1. `r ref.level_li`
+
+### Assumption Checks（前提条件チェック）
+
+`r assumption_txt`
+
+```{r regression-binom-assumption, fig.cap='**Assumption Checks**'}
+p <- image_read('imgs/04-regression-binom-assumption.png')
+p
+```
+
++ `r assumption.checks_li`
+    - `r assumption.collinearity_li`
+
+### Model Fit（モデル適合度）
+`r modelfit_txt`
+
+```{r regression-binom-modelfit, fig.cap='**Model Fit**'}
+p <- image_read('imgs/04-regression-binom-modelfit.png')
+p
+```
+
++ `r modelfit.measures_li`
+    - `r modelfit.measures.deviance_li`
+    - `r modelfit.measures.aic_li`
+    - `r modelfit.measures.bic_li`
+    - `r modelfit.measures.overall_li`
+
++ `r modelfit.pseudo.R2_li`
+    - `r modelfit.pseudo.R2.mcfadden_li`
+    - `r modelfit.pseudo.R2.cox_li`
+    - `r modelfit.pseudo.R2.nagelkerke_li`
+
+### Model Coefficients（モデル係数）
+`r modelcoeff_txt`
+
+```{r regression-binom-coeff, fig.cap='**Model Coefficients**'}
+p <- image_read('imgs/04-regression-binom-coeff.png')
+p
+```
+
++ `r modelcoeff.omnibus_li`
+	- `r modelcoeff.omnibus.likelihood_li`
++ `r modelcoeff.estimate.log_li`
+	- `r additional.ci_li`
++ `r odds.ratio_li`
+	- `r odds.ratio.ratio_li`
+	- `r additional.ci_li`
+
+### Estimated Marginal Means（推定周辺平均）
+`r marginal_txt`
+
+```{r regression-binom-marginal, fig.cap='**Estimated Marginal Means**'}
+p <- image_read('imgs/04-regression-binom-marginal.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location  = "+30+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+40")
+p
+```
+```{r, results="asis"}
+cat(readLines('snippets/MarginalMeans-reg.md'), sep = '\n')
+```
+
+
+## N Outcomes [Multinomial]（多項ロジスティック回帰）{#sec:regression-multinom}
+*多項ロジスティック回帰*は，回帰モデルの目的変数が*名義型*変数で，その変数の取り得る値が３種類以上ある場合に使用される分析手法です。
+
+```{r regression-multinom, fig.cap='**Logistic Regression**'}
+p <- image_read('imgs/04-regression-multinom.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
+p
+```
+
+1. `r varlist_li`
+1. `r depvar.nom_li`
+1. `r covar.reg_li`
+1. `r factor.reg_li`
+
++ `r builder_li`
++ `r reference_li`
++ `r modelfit_li`
++ `r modelcoeff_li`
++ `r marginal_li`
+
+### Model Builder（モデルビルダー）
+`r builder_txt`
+
+```{r regression-multinom-builder, fig.cap='**Model Builder**'}
+p <- image_read('imgs/04-regression-multinom-builder.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
+p
+```
+
+1. `r model.predictors_li`
+1. `r model.blocks_li`
+1. `r model.rarrow_li`
+1. `r model.triarrow_li`
+
+### Reference Levels（参照水準）
+`r reference_txt`
+
+```{r regression-multinom-reference, fig.cap='**Reference Levels**'}
+p <- image_read('imgs/04-regression-multinom-reference.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
+p
+```
+
+1. `r ref.var_li`
+1. `r ref.level_li`
+
+
+### Model Fit（モデル適合度）
+`r modelfit_txt`
+
+```{r regression-multinom-modelfit, fig.cap='**Model Fit**'}
+p <- image_read('imgs/04-regression-multinom-modelfit.png')
+p
+```
+
++ `r modelfit.measures_li`
+    - `r modelfit.measures.deviance_li`
+    - `r modelfit.measures.aic_li`
+    - `r modelfit.measures.bic_li`
+    - `r modelfit.measures.overall_li`
+
++ `r modelfit.pseudo.R2_li`
+    - `r modelfit.pseudo.R2.mcfadden_li`
+    - `r modelfit.pseudo.R2.cox_li`
+    - `r modelfit.pseudo.R2.nagelkerke_li`
+
+### Model Coefficients（モデル係数）
+`r modelcoeff_txt`
+
+```{r regression-multinom-coeff, fig.cap='**Model Coefficients**'}
+p <- image_read('imgs/04-regression-multinom-coeff.png')
+p
+```
+
++ `r modelcoeff.omnibus_li`
+	- `r modelcoeff.omnibus.likelihood_li`
++ `r modelcoeff.estimate.log_li`
+	- `r additional.ci_li`
++ `r odds.ratio_li`
+	- `r odds.ratio.ratio_li`
+	- `r additional.ci_li`
+
+### Estimated Marginal Means（推定周辺平均）
+`r marginal_txt`
+
+```{r regression-multinom-marginal, fig.cap='**Estimated Marginal Means**'}
+p <- image_read('imgs/04-regression-multinom-marginal.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location  = "+30+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+40")
+p
+```
+```{r, results="asis"}
+cat(readLines('snippets/MarginalMeans-reg.md'), sep = '\n')
+```
+
+## Ordinal Outcomes（順序ロジスティック回帰）{#sec:regression-ordinal}
+*順序ロジスティック回帰*は，回帰モデルの目的変数が*順序型*変数の場合に使用される分析手法です。
+
+```{r regression-ordinal, fig.cap='**Logistic Regression**'}
+p <- image_read('imgs/04-regression-ordinal.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
+p
+```
+
+1. `r varlist_li`
+1. `r depvar.nom_li`
+1. `r covar.reg_li`
+1. `r factor.reg_li`
+
++ `r builder_li`
++ `r reference_li`
++ `r modelfit_li`
++ `r modelcoeff_li`
+
+### Model Builder（モデルビルダー）
+`r builder_txt`
+
+```{r regression-ordinal-builder, fig.cap='**Model Builder**'}
+p <- image_read('imgs/04-regression-ordinal-builder.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
+p
+```
+
+1. `r model.predictors_li`
+1. `r model.blocks_li`
+1. `r model.rarrow_li`
+1. `r model.triarrow_li`
+
+### Reference Levels（参照水準）
+`r reference_txt`
+
+```{r regression-ordinal-reference, fig.cap='**Reference Levels**'}
+p <- image_read('imgs/04-regression-ordinal-reference.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
+p
+```
+
+1. `r ref.var_li`
+1. `r ref.level_li`
+
+
+### Model Fit（モデル適合度）
+`r modelfit_txt`
+
+```{r regression-ordinal-modelfit, fig.cap='**Model Fit**'}
+p <- image_read('imgs/04-regression-ordinal-modelfit.png')
+p
+```
+
++ `r modelfit.measures_li`
+    - `r modelfit.measures.deviance_li`
+    - `r modelfit.measures.aic_li`
+    - `r modelfit.measures.bic_li`
+    - `r modelfit.measures.overall_li`
+
++ `r modelfit.pseudo.R2_li`
+    - `r modelfit.pseudo.R2.mcfadden_li`
+    - `r modelfit.pseudo.R2.cox_li`
+    - `r modelfit.pseudo.R2.nagelkerke_li`
+
+### Model Coefficients（モデル係数）
+`r modelcoeff_txt`
+
+```{r regression-ordinal-coeff, fig.cap='**Model Coefficients**'}
+p <- image_read('imgs/04-regression-ordinal-coeff.png')
+p
+```
+
++ `r modelcoeff.omnibus_li`
+	- `r modelcoeff.omnibus.likelihood_li`
++ `r modelcoeff.estimate.log_li`
+	- `r additional.ci_li`
++ `r odds.ratio_li`
+	- `r odds.ratio.ratio_li`
+	- `r additional.ci_li`
 

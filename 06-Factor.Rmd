@@ -1,13 +1,228 @@
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
+require(ggplot2); require(ggplotify); require(cowplot);require(magick)
+source( "snippets/macros.R" )
 ```
 
 # Factor（因子分析）{#ch:factor}
 
-## Scale Analysis（尺度分析）{-}
-## Reliability Analysis（信頼性分析）{#sec:factor-reliability}
+このメニューには，*因子分析*およびそれに関連する分析手法がまとめられています。
 
-## Data Reduction（データ縮約）{-}
+## **Scale Analysis**（尺度分析）{-}
+
+## Reliability Analysis（信頼性分析）{#sec:factor-reliability}
+*信頼性分析*は，測定尺度の特性や尺度を構成する各項目の特性について調べるための手法です。尺度項目への反応（回答）に十分な*一貫性*が見られるかどうかを検討します。
+
+```{r factor-reliability, fig.cap='**Reliability Analysis**'}
+p <- image_read('imgs/06-factor-reliability.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
+p
+```
+1. `r varlist_li`
+2. `r items_li`
++ `r scale.stat_li`
+	- `r scale.stat.alpha_li`
+	- `r scale.stat.omega_li`
+	- `r scale.stat.mean_li`
+	- `r scale.stat.sd_li`
+
++ `r additional.options_li`
+	- `r additional.options.heatmap_li`
+
++ `r item.stat_li`
+	- `r item.stat.alpha_li`
+	- `r item.stat.omega_li`
+	- `r item.stat.mean_li`
+	- `r item.stat.sd_li`
+	- `r item.stat.irc_li`
+
++ `r reverse_li`
+
+### Reverse Scaled Items（逆転項目）
+`r reverse_txt`
+```{r factor-reliability-reverse, fig.cap='**Reverse Scaled Items**'}
+p <- image_read('imgs/06-factor-reliability-reverse.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+28+62")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+304+62")
+p
+```
+
+1. `r reverse.normal_li`
+1. `r reverse.reverse_li`
+
+## **Data Reduction**（データ縮約）{-}
+
 ## Principal Component Analysis（主成分分析）{#sec:factor-pca}
+*主成分分析*は，多数の変数で表現されている情報をできるだけ少ない変数に縮約して表現する手法です。情報を集約する際には，できるだけ元の情報を損なわないような方法がとられます。複雑なデータをより単純な形にまとめることで，データに対する理解を助けます。
+
+```{r factor-pca, fig.cap='**Principal Component Analysis**'}
+p <- image_read('imgs/06-factor-pca.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
+p
+```
+1. `r varlist_li`
+1. `r factvar_li`
++ `r method.components_li`
+	- `r method.components.rotation_li`
+`r rotation_li`
++ `r number.of.components_li`
+	- `r nfact.parallel.analysis_li`
+	- `r nfact.eigenvalue_li`
+		+ `r eigenvalue_li`
+	- `r nfact.fixed_li`
+		+ `r nfact.component_li`
++ `r assumption.checks_li`
+	- `r assumption.bartlett_li`
+	- `r assumption.kmo_li`
++ `r factor.loadings_li`
+	- `r factor.loadings.hide_li`
+	- `r factor.loadings.sort_li`
++ `r additional.output_li`
+	- `r component.summary_li`
+	- `r component.correlations_li`
+	- `r initial.eigenvalues_li`
+	- `r scree.plot_li`
+
 ## Exploratory Factor Analysis（探索的因子分析）{#sec:factor-efa}
+*探索的因子分析*は，多数の変数の背後にある少数の潜在的*因子*を特定し，それら少数の因子をもちいてデータを説明しようとする分析手法です。
+
+```{r factor-efa, fig.cap='**Exploratory Factor Analysis**'}
+p <- image_read('imgs/06-factor-efa.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
+p
+```
+1. `r varlist_li`
+1. `r factvar_li`
++ `r method.factor_li`
+	- `r method.factor.extraction_li`
+	- `r method.factor.rotation_li`
+`r rotation_li`
++ `r number.of.factors_li`
+	- `r nfact.parallel.analysis_li`
+	- `r nfact.eigenvalue_li`
+		+ `r eigenvalue_li`
+	- `r nfact.fixed_li`
+		+ `r nfact.factor_li`
++ `r assumption.checks_li`
+	- `r assumption.bartlett_li`
+	- `r assumption.kmo_li`
++ `r factor.loadings_li`
+	- `r factor.loadings.hide_li`
+	- `r factor.loadings.sort_li`
++ `r additional.output_li`
+	- `r factor.summary_li`
+	- `r factor.correlations_li`
+	- `r model.fit.measures_li`
+	- `r initial.eigenvalues_li`
+	- `r scree.plot_li`
+
+
+
 ## Confirmatory Factor Analysis（確認的因子分析）{#sec:factor-cfa}
+Confirmatory Factor Analysis
+
+*探索的因子分析*が多数の変数の背後にある潜在的*因子*を探索的に探る分析手法であるのに対し，*確認的因子分析*（検証的因子分析）はすでにある因子モデルが観察データにあてはまると言えるかどうかを確認するための分析手法です。
+
+```{r factor-cfa, fig.cap='**Confirmatory Factor Analysis**'}
+p <- image_read('imgs/06-factor-cfa.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
+p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+363+103")
+p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+363+128")
+p
+```
+
+1. `r varlist_li`
+1. `r factors_li`
+1. `r factors.name_li`
+1. `r factors.var_li`
++ `r residual.cov_li`
++ `r options_li`
++ `r estimates_li`
++ `r modelfit_li`
++ `r additional.output_li`
+
+### Residual Covariances
+`r  residual.cov_txt`
+
+```{r factor-cfa-residual, fig.cap='**Residual Covariances**'}
+p <- image_read('imgs/06-factor-cfa-residual.png')
+p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+30+46")
+p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+285+37")
+p
+```
+
+1. 分析に含まれる変数の一覧です。
+2. **Residual Covariances**（残差共分散）　残差の共分散を推定したい変数ペアを指定します。
+
+### Options
+`r options_txt`
+
+```{r factor-cfa-options, fig.cap='**Options**'}
+p <- image_read('imgs/06-factor-cfa-options.png')
+p
+```
+
++ **Missing Values Method**（欠損値）　欠損値の取り扱い方法を設定します。
+	- `r missing.fulliinfo_li`
+	- `r missing.listwise_li`
++ **Constraints**（制約）　モデル推定のための制約を指定します。
+	- **Factor variances =1**（因子分散 = 1）　潜在因子の分散を１に固定します。
+	- **Scale factor = scale first indicator**　 各潜在因子から*観測変数*への係数を推定する際，１番目の係数を１に固定します。
+
+### Estimates
+`r estimates_txt`
+
+```{r factor-cfa-estimates, fig.cap='**Estimates**'}
+p <- image_read('imgs/06-factor-cfa-estimates.png')
+p
+```
+
++ **Results**（結果）　結果に関する設定を行います。
+	- **Factor covariances**（因子共分散）　潜在因子間の分散および共分散を推定します。
+	- **Factor intercepts**（因子切片）　潜在因子の切片を推定します。
+	- **Residual covariances**（残差共分散）　残差（誤差）の分散および共分散を推定します。
+	- **Residual intercepts**（残差切片）　残差（誤差）の切片を推定します。
++ **Statistics**（統計量）　統計量の算出に関する設定を行います。
+	- **Test statistics**（検定統計量）　各潜在因子から観測変数への係数について，*統計量Ｚ*を用いて「潜在因子の影響は０である」という帰無仮説の検定を行います。
+	- `r additional.ci2_li`
+	- **Standardized estimate**（標準化推定値）　各係数について*標準化推定値*を算出します。
+
+### Model Fit（モデル適合度）
+`r modelfit_txt`
+
+```{r factor-cfa-modelfit, fig.cap='**Model Fit**'}
+p <- image_read('imgs/06-factor-cfa-modelfit.png')
+p
+```
+
++ **Test for Exact Fit**（適合度検定）　「観測値を完全に説明するモデルと推定されたモデルは同じものである」という帰無仮説の検定についての設定を行います。
+	- `r modelfit.cfa.chisq_li`
++ `r modelfit.measures_li`
+	- `r modelfit.measures.cfi_li`
+	- `r modelfit.measures.tli_li`
+	- `r modelfit.measures.srmr_li`
+	- `r modelfit.measures.rmsea_li`
+	- `r modelfit.measures.aic_li`
+	- `r modelfit.measures.bic_li`
+
+
+### Additional Output
+`r additional.output_txt`
+
+```{r factor-cfa-additional, fig.cap='**Additional Output**'}
+p <- image_read('imgs/06-factor-cfa-additional.png')
+p
+```
+
++ **Post-Hoc Model Performance**（モデル精度）　モデルの精度を向上させるための指標を算出します。
+	- **Residuals observed correlation matrix**（観察された相関行列の残差）　相関行列における期待値と観察値の差を算出します。  
+	`r cfa.highlight.values_li`　初期値は0.1です。
+	- **Modification indices**（修正指数）　モデルに含まれていないパラメータについて*修正指数*を算出します。  
+	`r cfa.highlight.values_li`　初期値は３です。
++ `r cfa.plots_li`
+	- **Path diagram**（パス図）　モデルのパス図を作成します。
+

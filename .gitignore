@@ -1,4 +1,6 @@
 .Rproj*
+.RData
+.Rhistory
 .DS_Store
 _book
 _bookdown_files

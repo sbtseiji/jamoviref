@@ -9,7 +9,6 @@ bookdown::gitbook:
         <li><a href="./">jamoviクイックガイド（Analysis編）</a></li>
       after: |
         <li><a href="https://bookdown.org" target="_blank">Published with bookdown</a></li>
-#    download: ["pdf"]
     sharing:
       facebook: yes
       twitter: yes
@@ -17,17 +16,3 @@ bookdown::gitbook:
       weibo: no
       instapper: no
       vk: no
-#bookdown::pdf_book:
-#  includes:
-#    in_header: preamble.tex
-#  dev: "quartz_pdf"
-#  latex_engine: lualatex
-#  citation_package: natbib
-#  keep_tex: yes
-  pandoc_args: 
-    - "--top-level-division=chapter"
-    - "--filter"
-    - "pandoc-aozora-ruby-filter"
-
-#bookdown::epub_book:
-#  dev: svglite

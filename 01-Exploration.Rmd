@@ -1,6 +1,7 @@
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
 require(ggplot2); require(ggplotify); require(cowplot)
+source( "rscripts/macros.R" )
 ```
 
 # Exploration（探索）{#ch:exploration}
@@ -13,54 +14,54 @@ require(ggplot2); require(ggplotify); require(cowplot)
 
 ```{r exploration-descriptives, fig.cap='**Descriptives**'}
 p <- ggdraw()+draw_image("imgs/01-exploration-descriptives.png")
-p <- p+ draw_label('①', x= 0.03, y= 0.82, fontfamily = "HiraginoSans-W3", colour="red", size=14)
-p <- p+ draw_label('②', x= 0.52, y= 0.78, fontfamily = "HiraginoSans-W3", colour="red", size=14)
-p <- p+ draw_label('③', x= 0.52, y= 0.47, fontfamily = "HiraginoSans-W3", colour="red", size=14)
-p <- p+ draw_label('④', x= 0.03, y= 0.27, fontfamily = "HiraginoSans-W3", colour="red", size=14)
-p <- p+ draw_label('⑤', x= 0.03, y= 0.16, fontfamily = "HiraginoSans-W3", colour="red", size=14)
-p <- p+ draw_label('⑥', x= 0.03, y= 0.09, fontfamily = "HiraginoSans-W3", colour="red", size=14)
 p
 ```
 
-1. データセットに含まれている変数の一覧です。
-2. **Variables**（変数）　記述統計量の算出を行う変数を指定します。
-3. **Split by**（分割）　グループごとに記述統計量を算出したい場合，ここにグールプ変数（*名義型*）を指定します。
-4. **Frequency tables**（度数分布表）　記述統計量算出の対象が*名義型*または*順序型*変数の場合，ここにチェックを入れることで度数分布表が作成されます。
-5. **Statistics**（統計量） 算出する統計量に関するオプション設定を行います。
-6. **Plots**（作図）　作図のためのオプションを設定します。
+<li> Variables（変数）　記述統計量の算出を行う変数を指定します。</li>
+
+<li> Split by（グールプ変数）　グループごとに記述統計量を算出したい場合，ここにグールプ変数（名義型`r infig('variable-nominal')`）を指定します。</li>
+
+<li> `r cbox()` Frequency tables（度数分布表）　記述統計量算出の対象が「名義型`r infig('variable-nominal')`」または「順序型`r infig('variable-ordinal')`」変数の場合，ここにチェックを入れることで度数分布表が作成されます。</li>
+
+<li> `r groupbar('Statistics')`（統計量）　算出する統計量に関するオプション設定を行います。</li>
+<li> `r groupbar('Plots')`（作図）　作図のオプションを設定します。</li>
 
 ### Statistics（統計量）{#sec:exploration-descriptives-statistics}
 ```{r exploration-descriptives-statistics, fig.cap='**Statistics**'}
 knitr::include_graphics("imgs/01-exploration-descriptives-statistics.png")
 ```
 + **Sample Size**（標本サイズ）
-  - **N**（測定値の個数）　分析対象の測定値の個数です。
-  - **Missing**（欠損値）　欠損値の個数です。
+  - `r cbox(TRUE)` N（測定値の個数）　分析変数に含まれるデータ総数を表示します。
+  - `r cbox(TRUE)` Missing（欠損値）　分析変数に含まれる欠損値の個数を表示します。
 
 + **Percentile Values**（パーセンタイル値）
-  - **Quartiles**（四分位数）　25%点，50%点（中央値），75%点を算出します。
-  - **Cut points for** [ &emsp; ] **equal groups**（ｎ分位数）　データ全体をｎ等分した場合の境界点を求めます。初期値は「４」に設定されています。
+  - `r cbox()` Cut points for [ &emsp; ] equal groups（ｎ分位数）　データ全体をn等分する位置にある値を算出します。初期値は「4」に設定されています。
+  - `r cbox()` Percentiles（四分位数）　値の小さい方から数えてn%の位置にある値を算出します。複数のパーセント点を指定する場合は，それらの値をコンマで区切って入力します。初期値は「25,50,75」に設定されています。
 
 + **Dispersion**（ばらつき）
-  - **Std. deviation**（標準偏差）　変数値の標準偏差を算出します。不偏分散をもとに値が表示されます。
-  - **Variance**（分散）　変数値の分散を算出します。この値は不偏値です。
-  - **Range**（範囲）　変数値最小値と最大値の差（幅）を算出します。
-  - **Minimum**（最小値）　変数値の最小値を求めます。
-  - **Maximum**（最大値）　変数値の最大値を求めます。
-  - **S. E. Mean**（標準誤差）　標本平均値の標準誤差を算出します。
+  - `r cbox(TRUE)` Std. deviation（標準偏差）　標準偏差を算出します。
+  - `r cbox()` Variance（分散）　分散を算出します。
+  - `r cbox()` Range（範囲）　範囲（最大値 – 最小値の幅）を算出します。
+  - `r cbox(TRUE)` Minimum（最小値）　最小値を求めます。
+  - `r cbox(TRUE)` Maximum（最大値）　最大値を求めます。
+  - `r cbox()` IQR（四分位範囲）　四分位範囲（第3四分位 – 第1四分位）を算出します。
+
++ **Mean Dispersion**（平均値のばらつき）
+  - `r cbox()` Std. error of Mean（平均値の標準誤差）　平均値の推定における標準誤差を算出します。
+  - `r cbox()` Confidence interval for Mean [ &emsp; ]%（平均値の[ &emsp; ]％信頼区間）　平均値の信頼区間（下限値と上限値）を算出します。
 
 + **Central Tendency**（中心傾向）
-  - **Mean**（平均値）　変数値の算術平均を求めます。
-  - **Median**（中央値）　変数値の中央値を求めます。
-  - **Mode**（最頻値）　変数値の最頻値を求めます。
-  - **Sum**（合計値）　変数値の合計値を求めます。
+  - `r cbox(TRUE)` Mean（平均値）　平均値を算出します。
+  - `r cbox(TRUE)` Median（中央値）　中央値を算出します。
+  - `r cbox()` Mode（最頻値）　中央値を算出します。
+  - `r cbox()` Sum（合計値）　合計値を算出します。
 
 + **Distribution**（分布）
-  - **Skewness**（歪度）　変数値の分布が左右対称であるかどうかの指標（*歪度*）を算出します。分布が左右対称の場合，歪度は０になります。この値は分布が正規分布とどの程度｜乖離《かいり》しているかの指標の１つとして用いられます。
-  - **Kurtosis**（尖度）　変数値の分布がどの程度ピーク付近に集中しているかの指標（*尖度*）を算出します。分布が正規分布とどの程度｜乖離《かいり》しているかの指標の１つとして用いられます。正規分布の場合，尖度は０になります。
+  - `r cbox()` **Skewness**（歪度）　歪度（分布が左右対称からずれている程度）を算出します。
+  - `r cbox()` **Kurtosis**（尖度）　尖度（分布が中心に集中している程度）を算出します。
 
 + **Normality**（正規性）
- - **Shapiro-Wilk**（シャピロ・ウィルク検定）　変数値が正規母集団から抽出された標本であるという帰無仮説についての検定を行います。このオプションで表示されるのはｐ値のみで，統計量（Ｗ）は表示されません。一般に，ｐ<.05の場合に正規分布から｜乖離《かいり》しているとみなされます。
+  - `r cbox()` **Shapiro-Wilk**（シャピロ・ウィルク検定）　分布が正規分布からずれているかどうかを検定します。
 
 ### Plots（作図）{#sec:exploration-descriptives-plots}
 
@@ -68,45 +69,54 @@ knitr::include_graphics("imgs/01-exploration-descriptives-statistics.png")
 knitr::include_graphics("imgs/01-exploration-descriptives-plots.png")
 ```
 
-+ **Histograms**（ヒストグラム）　※*連続型*変数のみ
-  - **Histogram**（ヒストグラム）　*ヒストグラム*を作成します。密度曲線グラフと重ねて作図することもできます。
++ **Histograms**（ヒストグラム）
+  - `r cbox()` Histogram（ヒストグラム）　度数分布をヒストグラムとして図示します。
 ```{r exploration-descriptives-plots-histogram, fig.cap='ヒストグラム',out.width='50%'}
 knitr::include_graphics("imgs/01-exploration-descriptives-plots-histogram.svg")
 ```
 
-  - **Density**（密度曲線）　度数分布を*カーネル平滑化*した密度曲線グラフを作成します。ヒストグラムに重ねて作図することもできます。
+  - `r cbox()` Density（密度曲線）　度数分布をカーネル平滑化した密度曲線グラフを作成します。
 ```{r exploration-descriptives-plots-density, fig.cap='密度曲線',out.width='50%'}
 knitr::include_graphics("imgs/01-exploration-descriptives-plots-density.svg")
 ```
 
-+ **Q-Q Plots**（Q-Qプロット）　※*連続型*変数のみ
-  - **Q-Q**　変数値が正規分布からどの程度｜乖離《かいり》しているかを視覚的に示すQ-Qプロットを作成します。変数値の分布が正規分布の場合，グラフ上のデータ点は直線上に並びます。
++ **Q-Q Plots**（Q-Qプロット）
+  - `r cbox()` Q-Q（正規Q-Qプロット）　正規Q-Qプロットを作成します。
 
 ```{r exploration-descriptives-plots-qq, fig.cap='Q-Qプロット',out.width='50%'}
 knitr::include_graphics("imgs/01-exploration-descriptives-plots-qq.svg")
 ```
 
-+ **Box Plots**（箱ひげ図）　※*連続型*変数のみ
-  - **Box plot**（箱ひげ図）　中央値と四分位数を用いてデータの分布を視覚化します。バイオリン図やデータプロットと重ねて作図することもできます。
++ **Box Plots**（箱ひげ図）
+  - `r cbox()` Box plot（箱ひげ図）　箱ひげ図を作成します。
 
 ```{r exploration-descriptives-plots-boxplot, fig.cap='箱ひげ図',out.width='50%'}
 knitr::include_graphics("imgs/01-exploration-descriptives-plots-boxplot.svg")
 ```
 
-  - **Violin**（バイオリン図）　カーネル確率密度を用いて変数値の分布を視覚化したバイオリン図と呼ばれる図を作成します。多くの場合，箱ひげ図と組み合わせて用いられます。
+  - `r cbox()` Violin（バイオリン図）　バイオリン図を作成します。
  
- ```{r exploration-descriptives-plots-violin, fig.cap='バイオリン図と箱ひげ図の組み合わせ',out.width='50%'}
+```{r exploration-descriptives-plots-violin, fig.cap='バイオリン図と箱ひげ図の組み合わせ',out.width='50%'}
 knitr::include_graphics("imgs/01-exploration-descriptives-plots-violin.svg")
 ```
- 
-  - **Data**（データプロット）　変数値の１つ１つを点としてグラフ上に示します。同じ値が複数ある場合，それらのデータ点は互いに重ならないように図示されます。データ点の重なりを防ぐ方法には，**jittered**（散らばり）と**stacked**（積み上げ）の２通りがあります。しばしば，箱ひげ図やバイオリン図と組み合わせて使用されます。
 
- ```{r exploration-descriptives-plots-data, fig.cap='「jittered」スタイルのデータプロット',out.width='50%'}
+  <ul>
+  <li>`r cbox()` Data（データ点）　1つ1つのデータを点として表示します。</li>
+
+  <ul>
+    <li>Jittered（散らばり）　同じ値が複数ある場合，それらのデータ点が互いに重ならないように点の位置をランダムにずらします。</li>
+    <li>Stacked（積み上げ）　同じ値が複数ある場合，それらのデータ点は互いに重ならないように点を積み重ねるようにして描画します。</li>
+    
+```{r exploration-descriptives-plots-data, fig.cap='「jittered」スタイルのデータプロット',out.width='50%'}
 knitr::include_graphics("imgs/01-exploration-descriptives-plots-data.svg")
 ```
- 
-+ **Bar Plots**　※*名義型*，*順序型*変数のみ
-  - **Bar plot**（棒グラフ）　棒グラフを作成します。
+
+  <li>`r cbox()` Mean（平均値）　箱ひげ図やバイオリン図上に平均値を表示します。</li>
+  </ul></ul>
+
++ **Bar Plots**
+
+  - `r cbox()` Bar plot（棒グラフ）　棒グラフを作成します。
 
  ```{r exploration-descriptives-plots-barplot, fig.cap='棒グラフ',out.width='50%'}
 knitr::include_graphics("imgs/01-exploration-descriptives-plots-barplot.svg")

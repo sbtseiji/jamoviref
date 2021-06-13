@@ -1,132 +1,140 @@
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
 require(ggplot2); require(ggplotify); require(cowplot);require(magick)
-source( "snippets/macros.R" )
+source( "rscripts/macros.R" )
+dorange<-'#E39300'
 ```
 
 # T-Tests（t検定）{#ch:ttests}
 
-*ｔ検定*は，２群の平均値の差の検定としてもっとも一般的に用いられる分析手法です。このメニューでは，データの形式に応じて複数の手法を使い分けることができます。
+*t検定*は，2群の平均値の差の検定としてもっとも一般的に用いられる分析手法です。このメニューでは，データの形式に応じて複数の手法を使い分けることができます。
 
-## Independent Samples T-Test（独立標本ｔ検定）{#sec:ttests-independent}
+## Independent Samples T-Test（独立標本t検定）{#sec:ttests-independent}
 
-独立標本ｔ検定では，「２つの標本の平均値が同じである」という帰無仮説について検定を行います。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまり平均値に差がある）可能性が高いことを示します。
+独立標本t検定では，「2つの標本の平均値が同じである」という帰無仮説について検定を行います。検定の結果得られたp値が小さい場合，帰無仮説が正しくない（つまり平均値に差がある）可能性が高いことを示します。
 
-*スチューデントの独立標本ｔ検定*は，２つの標本がともに正規分布の母集団から得られたものであり，かつその分散が等しいことを仮定しています。２標本の分散が等しいという仮定を用いるのが適切でないと考えられる場合には，*ウェルチのｔ検定*を使用することができます。また，２つの標本がどちらも正規分布の母集団から得られたものであるという仮定が不適切であると考えられる場合には，ノンパラメトリック検定である*マン・ホイットニー検定*を使用することもできます。ただし，マン・ホイットニー検定の帰無仮説は「両標本が同じ母集団から抽出されたものである」であり，ｔ検定とはやや異なります。
+*スチューデントの独立標本t検定*は，2つの標本がともに正規分布の母集団から得られたものであり，かつその分散が等しいことを仮定しています。2標本の分散が等しいという仮定を用いるのが適切でないと考えられる場合には，*ウェルチのt検定*を使用することができます。また，2つの標本がどちらも正規分布の母集団から得られたものであるという仮定が不適切であると考えられる場合には，ノンパラメトリック検定である*マン・ホイットニー検定*を使用することもできます。
 
 ```{r ttests-independent, fig.cap='**Independent Samples T-Test**'}
 p <- image_read("imgs/02-ttests-independent.png")
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+17+52")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+275+62")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+275+190")
 p
 ```
 
-1. `r varlist_li`
-2. `r depvar_li`
-3. `r groupvar_li`
-+ `r tests_li`
-    - `r student_li`
-      + `r bayes_li`
-    - `r welch_li`
-    - `r manU_li`
++ Dependent Variables（従属変数）　分析対象の変数を指定します。
++ Grouping Variable（グループ変数）　グループの別が入力されている変数を指定します。
 
-+ `r hypothesis_li`  
-    - **Group 1 ≠ Group 2**　グループ１と２の平均値の差が０でないと言えるかどうかについて，*両側検定*による検定を行います。
-    - **Group 1 > Group 2**　グループ１の平均値がグループ２の平均値より有意に高いと言えるかどうかについて，*片側検定*による検定を行います。
-    - **Group 1 < Group 2**　グループ１の平均値がグループ２の平均値より有意に低いと言えるかどうかについて，*片側検定*による検定を行います。
++ **Tests**（検定）　分析に用いる検定のタイプを指定します。
+  + `r cbox(TRUE)` Student's（スチューデントの検定）　スチューデントの検定による検定結果を表示します。
+    - `r cbox()` Bayes factor（ベイズ因子）　帰無仮説と対立仮説の間でベイズ因子を算出します。
+  + `r cbox()` Welch's（ウェルチの検定）　ウェルチの検定による検定結果を表示します。
+  + `r cbox()` Mann-Whitney U（マン=ホイットニーのU）　マン=ホイットニーのU検定の結果を表示します。
 
-+ `r missing.values_li`
-    - `r missing.pairwise_li`
-    - `r missing.listwise_li`
-`r missing.note_li`
 
-+ `r additional.statistics_li`
-    - `r additional.mean.difference_li`
-    - `r additional.es_li`
-    - `r additional.ci_li`
-    - `r addtional.descriptives_li`
-    - `r additional.plots_li`
++ **Hypothesis**（仮説）　検定に用いる仮説を選択します。
+  + `r radio(TRUE)` Group 1 ≠ Group 2　グループ1とグループ2で平均値が異なるかどうかを検定します（両側検定）
+  + `r radio()` Group 1 &gt; Group 2　グループ1の平均値がグループ2の平均値より大きいかどうかを検定します（片側検定）
+  + `r radio()` Group 1 &lt; Group 2　グループ1の平均値がグループ2の平均値より小さいかどうかを検定します（片側検定）
 
-+ `r assumption.checks_li`
-    - `r assumption.shapiro_li`  
-    - `r assumption.qq_li`  
-    - `r assumption.levene_li`
 
-## Paired Samples T-Test（対応ありｔ検定）{#sec:ttests-paired}
++ **Missing values**（欠損値）　データに欠損値が含まれている場合の対処方法を指定します。
+  + `r radio(TRUE)` Exclude cases analysis by analysis（分析ごとに除外）
+  + `r radio()` Exclude cases listwise（行全体を除外）
 
-*スチューデントの対応ありｔ検定*は，「ペアとなる測定値の差がゼロに等しい」という帰無仮説について検定を行います。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまりペアとなる測定値の差はゼロでない）可能性が高いことを示します。
 
-スチューデントの対応ありｔ検定は，ペアとなる測定値の差が正規分布に従うことを仮定しています。この仮定を置くことが不適切と考えられる場合には，ノンパラメトリック検定である*ウィルコクソンの符号順位検定*を使用することができます。ただし，ウィルコクソンの符号順位検定の帰無仮説は「２グループの代表値は同じである」であり，ｔ検定とはやや異なります。
++ **Additional Statistics**（追加の統計量）　一般的な分析結果に加えて算出したい統計量を指定します。
+  + `r cbox()` Mean difference（平均値の差）　グループ間の平均値の差とその標準誤差を算出します。
+    - `r cbox()` Confidence interval [ &emsp; ]（信頼区間）　平均値の差の信頼区間を算出します。
+  + `r cbox()` Effecr size（効果量）　平均値の差についての効果量を算出します。
+    - `r cbox()` Confidence interval [ &emsp; ]（信頼区間）　効果量の信頼区間を算出します。
+  + `r cbox()` Descriptives（記述統計量）　従属変数について，グループごとの記述統計量を算出します。
+  + `r cbox()` Descriptives plots（記述統計量のグラフ）　従属変数の平均値と中央値についてのグラフを作成します。
+
++ **Assumption Checks**（前提チェック）　検定に必要な前提条件が満たされているかどうかの確認を行います。
+  + `r cbox()` Homogeneity test（等質性検定）　分散の等質性についての検定を実施します。
+  + `r cbox()` Normality test（正規性検定）　分布の正規性についての検定を実施します。
+  + `r cbox()` Q-Q plot（Q-Qプロット）　正規Q-Qプロットを作成します。
+
+
+## Paired Samples T-Test（対応ありt検定）{#sec:ttests-paired}
+
+*スチューデントの対応ありt検定*は，「ペアとなる測定値の差がゼロに等しい」という帰無仮説について検定を行います。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまりペアとなる測定値の差はゼロでない）可能性が高いことを示します。
+
+スチューデントの対応ありt検定は，ペアとなる測定値の差が正規分布に従うことを仮定しています。この仮定を置くことが不適切と考えられる場合には，ノンパラメトリック検定である*ウィルコクソンの符号順位検定*を使用することができます。
 
 
 ```{r ttests-paired, fig.cap='**Paired Samples T-Test**'}
 p <- image_read("imgs/02-ttests-paired.png")
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+20+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
 p
 ```
 
-1. `r varlist_li`
-2. **Paired Variables**（ペア変数）　分析対象となる変数のペアを指定します。　※*連続型*変数のみ  
-ペア変数間の差は，左側の変数の値から右側の変数の値を引く形で算出されます。
 
-+ `r tests_li`
-    - `r student_li`
-       + `r bayes_li`
-    - `r wilcox_li`
++ Paired Variables（変数ペア）　分析対象の変数ペアを指定します
 
-+ **Hypothesis**（仮説）　検定の仮説を指定します。
-    - **Measure 1 ≠ Measure 2**　測定値１と測定値２の平均値の差が０でないと言えるかどうかについて，*両側検定*による検定を行います。
-    - **Measure 1 > Measure 2**　測定値１の平均値が測定値２の平均値より有意に高いと言えるかどうかについて，*片側検定*による検定を行います。
-    - **Measure 1 < Measure 2**　測定値１の平均値が測定値２の平均値より有意に低いと言えるかどうかについて，*片側検定*による検定を行います。
++ **Tests**（検定）　分析に用いる検定のタイプを指定します。
+  + `r cbox(TRUE)` Student's（スチューデントの検定）　スチューデントの検定による検定結果を表示します。
+    - `r cbox()` Bayes factor（ベイズ因子）　帰無仮説と対立仮説の間でベイズ因子を算出します。
+  + `r cbox()` Wilcoxon rank（ウィルコクソン符号順位検定）　ウィルコクソン符号順位検定の結果を表示します。
 
-+ `r additional.statistics_li`
-    - `r additional.mean.difference_li`
-    - `r additional.es_li`
-    - `r additional.ci_li`
-    - `r addtional.descriptives_li`
-    - `r additional.plots_li`
++ **Hypothesis**（仮説）　検定に用いる仮説を選択します
+  + `r radio(TRUE)` Measure 1 ≠ Measure 2　測定値1と測定値2で平均値が異なるかどうかを検定します（両側検定）
+  + `r radio()` Measure 1 &gt; Measure 2　測定値1の平均値が測定値2の平均値より大きいかどうかを検定します（片側検定）
+  + `r radio()` Measure 1 &lt; Measure 2　測定値1の平均値が測定値2の平均値より小さいかどうかを検定します（片側検定）
 
-+ `r assumption.checks_li`
-    - `r assumption.shapiro_li`  
-    - `r assumption.qq_li`
++ **Missing values**（欠損値）　データに欠損値が含まれている場合の対処方法を指定します
+  + `r radio(TRUE)` Exclude cases analysis by analysis（分析ごとに除外）
+  + `r radio()` Exclude cases listwise（行全体を除外）
 
-## One Sample T-Test（１標本ｔ検定）{#sec:ttests-one}
-*スチューデントの１標本ｔ検定*は，「真の平均値が特定の値（多くの場合「ゼロ」）に等しい」という帰無仮説について検定します。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまり真の平均値は指定した値とは異なる）可能性が高いことを示します。
++ **Additional Statistics**（追加の統計量）　一般的な分析結果に加えて算出したい統計量を指定します
+  + `r cbox()` Mean difference（平均値の差）　グループ間の平均値の差とその標準誤差を算出します。
+    - `r cbox()` Confidence interval [ &emsp; ]（信頼区間）　平均値の差の信頼区間を算出します。
+  + `r cbox()` Effecr size（効果量）　平均値の差についての効果量を算出します。
+    - `r cbox()` Confidence interval [ &emsp; ]（信頼区間）　効果量の信頼区間を算出します。
+  + `r cbox()` Descriptives（記述統計量）　従属変数について，グループごとの記述統計量を算出します。
+  + `r cbox()` Descriptives plots（記述統計量のグラフ）　従属変数の平均値と中央値についてのグラフを作成します。
 
-スチューデントの１標本ｔ検定は，データが正規分布から抽出されていることを前提としています。この仮定が適切でないと考えられる場合には，ノンパラメトリック検定である*ウィルコクソン符号順位検定*を使用することもできます。ただし，ウィルコクソンの符号順位検定の帰無仮説は「中央値が特定の値に等しい」であり，ｔ検定とはやや異なります。
++ **Assumption Checks**（前提チェック）　検定に必要な前提条件が満たされているかどうかの確認を行います
+  + `r cbox()` Normality test（正規性検定）　分布の正規性についての検定を実施します。
+  + `r cbox()` Q-Q plot（Q-Qプロット）　正規Q-Qプロットを作成します。
+
+
+## One Sample T-Test（1標本t検定）{#sec:ttests-one}
+*スチューデントの1標本t検定*は，「真の平均値が特定の値（多くの場合「ゼロ」）に等しい」という帰無仮説について検定します。検定の結果得られたｐ値が低い場合，帰無仮説が正しくない（つまり真の平均値は指定した値とは異なる）可能性が高いことを示します。
+
+スチューデントの1標本t検定は，データが正規分布から抽出されていることを前提としています。この仮定が適切でないと考えられる場合には，ノンパラメトリック検定である*ウィルコクソン符号順位検定*を使用することもできます。
+
 
 
 ```{r ttests-one, fig.cap='**One Sample T-Test**'}
 p <- image_read("imgs/02-ttests-one.png")
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+20+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+70")
 p
 ```
 
-1. `r varlist_li`
-1. `r depvar_li`
-ペア変数間の差は，左側の変数の値から右側の変数の値を引く形で算出されます。
++ Dependent Variables（従属変数）　分析対象の変数を指定します。
 
-+ `r tests_li`
-    - `r student_li`
-       + `r bayes_li`
-    - `r wilcox_li`
++ **Tests**（検定）　分析に用いる検定を指定します。
+  + `r cbox(TRUE)` Student's（スチューデントの検定）　スチューデントの検定による検定結果を表示します。
+    - `r cbox()` Bayes factor（ベイズ因子）　帰無仮説と対立仮説の間でベイズ因子を算出します。
+      - Prior [ &emsp; ]（事前値）　ベイズ因子の算出に使用する事前値を設定を行います。初期値は0.707です。
+  + `r cbox()` Wilcoxon rank（ウィルコクソン符号順位検定）　ウィルコクソン符号順位検定の結果を表示します。
 
-+ **Hypothesis**（仮説）　検定の仮説を指定します。
-    - **Test Value**（基準値）　平均値の比較対照となる基準値を設定します。初期値は「０」です。
-    - **Measure 1 ≠ Measure 2**　従属変数の平均値が指定した基準値と異なると言えるかどうかについて，*両側検定*による検定を行います。
-    - **Measure 1 > Measure 2**　従属変数の平均値が指定した基準値より有意に高いと言えるかどうかについて，*片側検定*による検定を行います。
-    - **Measure 1 < Measure 2**　従属変数の平均値が指定した基準値より有意に低いと言えるかどうかについて，*片側検定*による検定を行います。
++ **Hypothesis**（仮説）　検定に用いる仮説を選択します。
+  + Test value [ &emsp; ]（検定値）　比較したい値を指定します。
+  + `r radio(TRUE)` ≠ Test value　平均値が検定値と異なるかどうかを検定します（両側検定）
+  + `r radio()` &gt; Test value　平均値が検定値より大きいかどうかを検定します（片側検定）
+  + `r radio()` &lt; Test value　平均値が検定値より小さいかどうかを検定します（片側検定）
 
-+ `r additional.statistics_li`
-    - `r additional.mean.difference_li`
-    - `r additional.es_li`
-    - `r additional.ci_li`
-    - `r addtional.descriptives_li`
-    - `r additional.plots_li`
++ **Missing values**（欠損値）　データに欠損値が含まれている場合の対処方法を指定します。
+  + `r radio(TRUE)` Exclude cases analysis by analysis（分析ごとに除外）
+  + `r radio()` Exclude cases listwise（行全体を除外）
 
-+ `r assumption.checks_li`
-    - `r assumption.shapiro_li`
-    - `r assumption.qq_li`
++ **Additional Statistics**（追加の統計量）　一般的な分析結果に加えて算出したい統計量を指定します
+  + `r cbox()` Mean difference（平均値の差）　グループ間の平均値の差とその標準誤差を算出します。
+    - `r cbox()` Confidence interval [ &emsp; ]（信頼区間）　平均値の差の信頼区間を算出します。
+  + `r cbox()` Effecr size（効果量）　平均値の差についての効果量を算出します。
+    - `r cbox()` Confidence interval [ &emsp; ]（信頼区間）　効果量の信頼区間を算出します。
+  + `r cbox()` Descriptives（記述統計量）　従属変数について，グループごとの記述統計量を算出します。
+  + `r cbox()` Descriptives plots（記述統計量のグラフ）　従属変数の平均値と中央値についてのグラフを作成します。
+
++ **Assumption Checks**（前提チェック）　検定に必要な前提条件が満たされているかどうかの確認を行います
+  + `r cbox()` Normality test（正規性検定）　分布の正規性についての検定を実施します。
+  + `r cbox()` Q-Q plot（Q-Qプロット）　正規Q-Qプロットを作成します。

@@ -1,12 +1,12 @@
 ```{r, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = 'center', out.width='80%')
 require(ggplot2); require(ggplotify); require(cowplot);require(magick)
-source( "snippets/macros.R" )
+source( "rscripts/macros.R" )
 ```
 
 
 # Regression（回帰分析）{#ch:regression}
-*回帰分析*は，変数間の相関関係を利用して，１つあるいは複数の変数（*説明変数*）から，関心対象の変数（*目的変数*）を説明するモデルを作成します。このメニューでは，目的変数の種類に応じて複数の回帰分析を使い分けることできます。
+*回帰分析*は，変数間の相関関係を利用して，1つあるいは複数の変数（*説明変数*）から，関心対象の変数（*目的変数*）を説明するモデルを作成します。このメニューでは，目的変数の種類に応じて複数の回帰分析を使い分けることできます。
 
 
 ## Correlation Matrix（相関行列）{#sec:regression-correlation}
@@ -16,460 +16,539 @@ source( "snippets/macros.R" )
 
 ```{r regression-cormat, fig.cap='**Corrilation Matrix**'}
 p <- image_read('imgs/04-regression-cormat.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+55")
 p
 ```
-1. `r varlist_li`
-1. `r corvar_li`
-+ **Correlation Coefficients**（相関係数）　算出する相関係数の種類を指定します。
-	- **Pearson**（ピアソン）　*ピアソンの積率相関係数*を算出します。
-	- **Spearman**（スピアマン）　*スピアマンの順位相関係数*を算出します。
-	- **Kendall's tau-b**（ケンドールのτ-ｂ）　*ケンドールの順位相関係数*を算出します。
 
-+ `r hypothesis_li`
-	- **Correlated**（相関）　有意な相関があるかどうかを検定します。
-	- **Correlated positively**（正の相関）　有意な正の相関があるかどうかを検定します。
-	- **Correlated negatively**（負の相関）　有意な負の相関があるかどうかを検定します。
++ **Correlation Coefficients**（相関係数）　算出する相関係数の種類を指定します。
+  + `r cbox(T)` Pearson（ピアソン）　ピアソンの積率相関係数を算出します。
+  + `r cbox()` Spearman（スピアマン）　スピアマンの順位相関係数を算出します。
+  + `r cbox()` Kendall's tau-b（ケンドール）　ケンドールの順位相関係数（タウ-b）を算出します。
+
++ **Hypothesis**（仮説）　有意性検定における仮説を指定します。
+  + `r radio(T)` Correlated（相関あり）　相関係数が0でない場合に検定結果が有意になります（両側検定）
+  + `r radio()` Correlated positively（正の相関あり）　相関係数が0より大きい場合に検定結果が有意になります（片側検定）
+  + `r radio()` Correlated negatively（負の相関あり）　相関係数が0より小さい場合に検定結果が有意になります（片側検定）
+
++ **Additional Options**（追加オプション）　結果の表示方法についてのオプション設定です。
+  + `r cbox(T)` Report significance（有意性を報告）　相関係数の下に，「p-value（有意性検定のp値）」を表示します。
+  + `r cbox()` Flag significant correlations（有意な相関をマーク）　統計的に有意な相関係数の右肩に「\*」などの印をつけて示します。
+  + `r cbox()` N（標本サイズ）　相関係数の算出対象となった標本サイズ（データペアの数）を示します。
+  + `r cbox()` Confidence intervals（信頼区間）　相関係数の信頼区間を算出して示します。
+    + Interval [ &nbsp; ] %　信頼区間の幅を数値指定します。初期設定値は95%です。
+ 
++ **Plot**（作図）　結果の図を作成します。
+  + `r cbox()` Correlation matrix（相関行列）　変数ペアごとの散布図を作成します。
+    - `r cbox()` Densities for variables（変数の密度曲線）　各変数について密度曲線を作成します。
+    - `r cbox()` Statistics（統計量）　図の中に相関係数の値を示します。
+
+## Partial Correlation（偏相関）{#sec:regression-partial-correlation}
+
+偏相関係数や部分相関係数の算出を行います。
+
+```{r regression-partial-correlation, fig.cap='**Partial Correlation**'}
+p <- image_read('imgs/04-regression-partial-correlation.png')
+p
+```
+
++ **Correlation Coefficients**（相関係数）　算出する相関係数の種類を指定します。
+  + `r cbox(T)` Pearson（ピアソン）　ピアソンの積率相関係数を算出します。
+  + `r cbox()` Spearman（スピアマン）　スピアマンの順位相関係数を算出します。
+  + `r cbox()` Kendall's tau-b（ケンドール）　ケンドールの順位相関係数（タウ-b）を算出します。
+
++ **Hypothesis**（仮説）　有意性検定における仮説を指定します。
+  + `r radio(T)` Correlated（相関あり）　相関係数が0でない場合に検定結果が有意になります（両側検定）
+  + `r radio()` Correlated positively（正の相関あり）　相関係数が0より大きい場合に検定結果が有意になります（片側検定）
+  + `r radio()` Correlated negatively（負の相関あり）　相関係数が0より小さい場合に検定結果が有意になります（片側検定）
+
++ **Correlation Type**
+  - `r radio(T)` Partial（偏相関）　偏相関係数を算出します。
+  - `r radio()` Semipartial（部分相関）　部分相関係数を算出します。
 
 +  **Additional Options**（その他のオプション）
-	- **Report significance**（有意確率の報告）　相関係数の有意確率を報告します。
-	- `r additional.corr.flag_li`
-	- `r additional.ci_li`
+  + `r cbox(T)`Report significance（有意性を報告）　相関係数の下に，「p-value（有意性検定のp値）」を表示します。
+  + `r cbox()` Flag significant correlations（有意な相関をマーク）　統計的に有意な相関係数の右肩に「\*」などの印をつけて示します。
+  + `r cbox()` N（標本サイズ）　相関係数の算出対象となった標本サイズ（データペアの数）を示します。
 
-+ **Plot**（作図）
-	- **Correlation matrix**（相関行列）　*相関行列プロット*を作成します。
-		+ **Densities for variables**（変数の密度）　相関行列プロットに密度グラフをあわせて表示します。
-		+ **Statistics**（統計量） 　相関行列プロットに相関係数を表示します。
+## Linear Regression（線形回帰）{#sec:regression-regression}
 
-## Linear Regression（線形回帰分析）{#sec:regression-regression}
-
-*線形回帰分析*は，*連続型*の従属変数（*目的変数*）と１つあるいは複数の独立変数（*説明変数*）の関係を検討するための分析手法です。線形回帰分析は，数理的には*分散分析*や*共分散分析*と同じものです。なお，線形回帰分析では残差（誤差）が正規分布することが前提となっており，目的変数に*名義型*や*順序型*の変数を使用することはできません。目的変数が*名義型*や*順序型*の場合には，*ロジスティック回帰*を使用することができます。
+*線形回帰*は，*連続型*の従属変数（*目的変数*）と1つあるいは複数の独立変数（*説明変数*）の関係を検討するための分析手法です。
 
 ```{r regression-linear, fig.cap='**Linear Regression**'}
 p <- image_read('imgs/04-regression-linear.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
 p
 ```
 
-1. `r varlist_li`
-1. `r depvar.reg_li`
-1. `r covar.reg_li`
-1. `r factor.reg_li`
++ Dependent Variable（従属変数）　回帰分析に使用する目的変数を指定します。
 
-+ `r builder_li`
-+ `r reference_li`
-+ `r assumption.checks_li`
-+ `r modelfit_li`
-+ `r modelcoeff_li`
-+ `r marginal_li`
++ Covariates（共変量）　回帰分析に使用する説明変数のうち，連続型（`r infig('variable-continuous')`）のものを指定します。
 
-### Model Builder（モデルビルダー）
-`r builder_txt`
++ Factors（要因）　回帰分析に使用する説明変数のうち，名義型（`r infig('variable-nominal')`）のものを指定します。
+
++ `r groupbar('Model Builder')`（モデルビルダー）　交互作用を含むモデルの作成や複数モデルの比較を行います。
++ `r groupbar('Reference Levels')`（基準レベル）　比較基準として用いる水準値を指定します。
++ `r groupbar('Assumption Checks')`（前提チェック）　正規性の検定など，分析の前提条件をチェックします。
++ `r groupbar('Model Fit')`（モデル適合度）　モデル適合度に関する設定を行います。
++ `r groupbar('Model Coefficients')`（モデル係数）　モデル係数に関する設定を行います。
++ `r groupbar('Estimated Marginal Means')`（推定周辺平均）　各効果の周辺平均値（回帰モデルによる推定値）に関する設定を行います。
++ `r groupbar('Save')`（保存）　モデル予測値や残差などを新たな変数として保存します。
+
+### Model Builder（モデルビルダー）{#sub:regression-regression-builder}
+交互作用を含むモデルの作成や複数モデルの比較を行います。
 
 ```{r regression-linear-builder, fig.cap='**Model Builder**'}
 p <- image_read('imgs/04-regression-linear-builder.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
 p
 ```
 
-1. `r model.predictors_li`
-1. `r model.blocks_li`
-1. `r model.rarrow_li`
-1. `r model.triarrow_li`
++ Predictors（予測変数）　分析モデルに含まれる予測変数（説明変数）の一覧です。
++ Blocks（ブロック）　説明変数を組み合わせて分析モデルを作成します。
 
-### Reference Levels（参照水準）
-`r reference_txt`
+### Reference Levels（基準レベル）{#sub:regression-regression-reference}
+
+分析において基準とする水準の値を設定します。
 
 ```{r regression-linear-reference, fig.cap='**Reference Levels**'}
 p <- image_read('imgs/04-regression-linear-reference.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
 p
 ```
 
-1. `r ref.var_li`
-1. `r ref.level_li`
++ **Variable**（変数）　名義型説明変数の一覧です。
++ **Reference Level**（基準レベル）　回帰係数を算出する際の基準レベルを指定します。
++ **Intercept**（切片）　切片の計算方法を指定します。
+  - `r radio(T)` Reference level (dummy coding)　基準レベルを0，それ以外を1の形に数値化します。
+  - `r radio()` Grand mean (simple coding)　変数値の平均が0になるように数値化します。
 
-### Assumption Checks（前提条件チェック）
+### Assumption Checks（前提チェック）{#sub:regression-regression-assumption}
 
-`r assumption_txt`
+正規性の検定など，分析の前提条件をチェックします。
 
 ```{r regression-linear-assumption, fig.cap='**Assumption Checks**'}
 p <- image_read('imgs/04-regression-linear-assumption.png')
 p
 ```
 
-+ `r assumption.checks_li`
-    - `r assumption.autocorr.test_li`
-    - `r assumption.collinearity_li`
-    - `r assumption.qq.res_li`
-    - `r assumption.res.plots_li`
++ **Assumption Checks**（前提チェック）　回帰分析の前提条件が満たされているかどうかをチェックするための項目です。
+  - `r cbox()` Autocorrelation test（自己相関検定）　自己相関の有無について検定します。
+  - `r cbox()` Collinearity statistics（共線性統計量）　多重共線性の問題が生じていないかどうかを確かめます。
+  - `r cbox()` Normality test（正規性検定）　残差の正規性について検定を行います。
+  - `r cbox()` Q-Q plot of residuals（残差Ｑ-Ｑプロット）　残差のＱ-Ｑプロットを作成します。
+  - `r cbox()` Residual plots（残差プロット）　残差のプロットを作成します。
 
-+ `r data.summary_li`
-    - `r data.summary.cook_li`
++ **Data Summary**（データ要約）
+  - `r cbox()` Cook's distance（クックの距離）　各測定値についてクックの距離を算出します。
 
-### Model Fit（モデル適合度）
-`r modelfit_txt`
+### Model Fit（モデル適合度）{#sub:regression-regression-modelfit}
+*モデル適合度*に関する設定を行います。
 
 ```{r regression-linear-modelfit, fig.cap='**Model Fit**'}
 p <- image_read('imgs/04-regression-linear-modelfit.png')
 p
 ```
 
-+ `r modelfit.measures_li`
-    - `r modelfit.measures.r_li`
-    - `r modelfit.measures.r2_li`
-    - `r modelfit.measures.adjstr_li`
-    - `r modelfit.measures.aic_li`
-    - `r modelfit.measures.bic_li`
-    - `r modelfit.measures.rmse_li`
++ **Fit Measures**　モデル適合度の指標を指定します。
+  - `r cbox(T)` R　重相関係数（R）を算出します。
+  - `r cbox(T)` R²　決定係数（R²）を算出します。
+  - `r cbox()` Adjusted R²　調整済み決定係数（R²）を算出します。
+  - `r cbox()` AIC　赤池情報量規準（AIC）を算出します。
+  - `r cbox()` BIC　ベイズ情報量規準（BIC）を算出します。
+  - `r cbox()` RMSE　誤差2乗平均平方根（RMSE）を算出します。
 
-+ `r modelfit.overall_li`
-    - `r modelfit.f_li`
++ **Overall Model Test**（モデル全体の検定）　全体的なモデル適合度についての検定を行います。
+  - `r cbox()` F test（Ｆ検定）　説明変数を含まない帰無モデルと分析モデルに有意な差があるといえるかどうかについて検定を行います。
 
-### Model Coefficients（モデル係数）
-`r modelcoeff_txt`
+
+### Model Coefficients（モデル係数）{#sub:regression-regression-coeff}
+*モデル係数*に関する設定を行います。
 
 ```{r regression-linear-coeff, fig.cap='**Model Coefficients**'}
 p <- image_read('imgs/04-regression-linear-coeff.png')
 p
 ```
 
-+ `r modelcoeff.omnibus_li`
-	- `r modelcoeff.omnibus.anova_li`
-+ `r modelcoeff.estimate_li`
-	- `r additional.ci_li`
-+ `r modelcoeff.std.estimate_li`
-	- `r modelcoeff.std.estimate.coeff_li`
-	- `r additional.ci_li`
 
-### Estimated Marginal Means（推定周辺平均）
-`r marginal_txt`
++ **Omnibus Test**（オムニバス検定）　各説明変数についてオムニバス検定を行います。
+  - `r cbox()` ANOVA Test（ANOVA検定）　各説明変数の説明力が0でないかどうかを検定します。
+
++ **Estimate**（推定値）　回帰係数の推定に関する設定を行います。
+  - `r cbox()` Confidence interval（信頼区間）　回帰係数の信頼区間を算出します。
+    - Interval [ &emsp; ]%　信頼区間の幅を指定します。
+
++ **Standardized Estimate**（標準化推定値）　回帰係数の標準化に関する設定を行います。
+  - `r cbox()` Standardized estimate（標準化推定値）　標準化回帰係数を算出します。
+  - `r cbox()` Confidence interval（信頼区間）　標準化回帰係数の信頼区間を算出します。
+    - Interval [ &emsp; ]%　信頼区間の幅を指定します。
+
+
+### Estimated Marginal Means（推定周辺平均）{#sub:regression-regression-emm}
+各効果の*周辺平均値*（分析モデルに基づく平均値）の推定に関する設定を行います。
 
 ```{r regression-linear-marginal, fig.cap='**Estimated Marginal Means**'}
 p <- image_read('imgs/04-regression-linear-marginal.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location  = "+30+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+40")
 p
 ```
-```{r, results="asis"}
-cat(readLines('snippets/MarginalMeans-reg.md'), sep = '\n')
+
++ Marginal Means（周辺平均値）　周辺平均値の算出対象を指定します。
++ **General Options**（全般オプション）
+  - `r cbox(T)` Equal cell weights（均等重みづけ）
+  - `r cbox(T)` Confidence interval（信頼区間）　周辺平均値の信頼区間を算出します。
+    + Interval [ &emsp; ]% 信頼区間の幅を指定します。
+
++ **Output**（出力）
+  - `r cbox(T)` Marginal means plots（周辺平均値のグラフ）　周辺平均値をグラフに示します。
+  - `r cbox()` Marginal means tables（周辺平均値の表）　周辺平均値を表に示します。
+
+### Save（保存）{#sub:regression-regression-save}
+分析結果を新たな変数として保存します。
+
+```{r regression-linear-save, fig.cap='**Save**'}
+p <- image_read('imgs/04-regression-linear-save.png')
+p
 ```
 
++ `r cbox()` Predicted values（予測値）　回帰モデルによる予測値を変数として保存します。
++ `r cbox()` Residuals（残差）　回帰モデルの残差を変数として保存します。
++ `r cbox()` Cook's distance（クックの距離）　クックの距離を変数として保存します。
 
-## **Logistic Regression**（ロジスティック回帰）{-}
-*ロジスティック回帰*は，回帰モデルの目的変数が*名義型*や*順序型*の場合に使用される分析手法です。さらに目的変数の種類により，複数の手法が使い分けられます。
+
+## **Logistic Regression**（ロジスティック回帰）{-#sec:logistic-regression}
+*ロジスティック回帰*は，回帰モデルの目的変数が「名義型（`r infig('variable-nominal')`）」や「順序型（`r infig('variable-ordinal')`）」の場合に使用される分析手法です。さらに目的変数の種類により，複数の手法が使い分けられます。
 
 ## 2 Outcomes [Binomial]（２項ロジスティック回帰）{#sec:regression-binom}
 *２項ロジスティック回帰*は，回帰モデルの目的変数が「はい・いいえ」などの２値変数の場合に使用される分析手法です。
 
 ```{r regression-binom, fig.cap='**Logistic Regression**'}
 p <- image_read('imgs/04-regression-binom.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
 p
 ```
 
-1. `r varlist_li`
-1. `r depvar.nom_li`
-1. `r covar.reg_li`
-1. `r factor.reg_li`
++ Dependent Variables（従属変数）　回帰分析に使用する目的変数を指定します。
 
-+ `r builder_li`
-+ `r reference_li`
-+ `r assumption.checks_li`
-+ `r modelfit_li`
-+ `r modelcoeff_li`
-+ `r marginal_li`
-+ `r prediction_li`
++ Covariates（共変量）　回帰分析に使用する説明変数のうち，連続型（`r infig('variable-continuous')`）のものを指定します。
 
-### Model Builder（モデルビルダー）
-`r builder_txt`
++ Factors（要因）　回帰分析に使用する説明変数のうち，名義型（`r infig('variable-nominal')`）のものを指定します。
+
++ `r groupbar('Model Builder')`（モデルビルダー）　交互作用を含むモデルの作成や複数モデルの比較を行います。
++ `r groupbar('Reference Levels')`（基準レベル）　比較基準として用いる水準値を指定します。
++ `r groupbar('Assumption Checks')`（前提チェック）　正規性の検定など，分析の前提条件をチェックします。
++ `r groupbar('Model Fit')`（モデル適合度）　モデル適合度に関する設定を行います。
++ `r groupbar('Model Coefficients')`（モデル係数）　モデル係数に関する設定を行います。
++ `r groupbar('Prediction')`（予測）　このモデルで目的変数の値を正しく判別できるかどうかを検討します。
++ `r groupbar('Estimated Marginal Means')`（推定周辺平均）　各効果の周辺平均値（回帰モデルによる推定値）に関する設定を行います。
++ `r groupbar('Save')`（保存）　モデル予測値や残差などを新たな変数として保存します。
+
+### Model Builder（モデルビルダー）{#sub:regression-binom-builder}
+交互作用を含むモデルの作成や複数モデルの比較を行います。
 
 ```{r regression-binom-builder, fig.cap='**Model Builder**'}
 p <- image_read('imgs/04-regression-binom-builder.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
 p
 ```
++ Predictors（予測変数）　分析モデルに含まれる予測変数（説明変数）の一覧です。
++ Blocks（ブロック）　説明変数を組み合わせて分析モデルを作成します。
 
-1. `r model.predictors_li`
-1. `r model.blocks_li`
-1. `r model.rarrow_li`
-1. `r model.triarrow_li`
+### Reference Levels（基準レベル）{#sub:regression-binom-reference}
 
-### Reference Levels（参照水準）
-`r reference_txt`
+分析において基準とする水準の値を設定します。
 
 ```{r regression-binom-reference, fig.cap='**Reference Levels**'}
 p <- image_read('imgs/04-regression-binom-reference.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
 p
 ```
 
-1. `r ref.var_li`
-1. `r ref.level_li`
++ Variable（変数）　名義型説明変数の一覧です。
++ Reference Level（基準レベル）　回帰係数を算出する際の基準レベルを指定します。
 
-### Assumption Checks（前提条件チェック）
+### Assumption Checks（前提チェック）{#sub:regression-binom-assumption}
 
-`r assumption_txt`
+回帰分析の前提条件が満たされているかどうかをチェックするための項目です。
 
 ```{r regression-binom-assumption, fig.cap='**Assumption Checks**'}
 p <- image_read('imgs/04-regression-binom-assumption.png')
 p
 ```
 
-+ `r assumption.checks_li`
-    - `r assumption.collinearity_li`
+- `r cbox()` Collinearity statistics（共線性統計量）　多重共線性の問題が生じていないかどうかを確かめます。
 
-### Model Fit（モデル適合度）
-`r modelfit_txt`
+### Model Fit（モデル適合度）{#sub:regression-binom-modelfit}
+*モデル適合度*に関する設定を行います。
 
 ```{r regression-binom-modelfit, fig.cap='**Model Fit**'}
 p <- image_read('imgs/04-regression-binom-modelfit.png')
 p
 ```
 
-+ `r modelfit.measures_li`
-    - `r modelfit.measures.deviance_li`
-    - `r modelfit.measures.aic_li`
-    - `r modelfit.measures.bic_li`
-    - `r modelfit.measures.overall_li`
++ **Fit Measures**（モデル適合度）　モデル適合度の指標を指定します。
+  - `r cbox(T)` Deviance　逸脱度を算出します。
+  - `r cbox(T)` AIC　赤池情報量規準（AIC）を算出します。
+  - `r cbox()` BIC　ベイズ情報量規準（BIC）を算出します。
+  - `r cbox()` Overall model test（モデル全体の検定）　全体的なモデル適合度についての検定を行います。
 
-+ `r modelfit.pseudo.R2_li`
-    - `r modelfit.pseudo.R2.mcfadden_li`
-    - `r modelfit.pseudo.R2.cox_li`
-    - `r modelfit.pseudo.R2.nagelkerke_li`
++ **Pseudo R²**（擬似決定係数）　モデルのあてはまりの程度を標準化した値を算出します。
+  - `r cbox(T)` McFadden's R²（マクファデンのR²）　マクファデンの擬似決定係数を算出します。
+  - `r cbox()` Cox & Snell's R²（コックス=スネルのR²）　コックス＝スネルの擬似決定係数を算出します。
+  - `r cbox()` Nagelkerke's R²（ナゲルケルケのR²）　ナゲルケルケの擬似決定係数を算出します。
 
-### Model Coefficients（モデル係数）
-`r modelcoeff_txt`
+### Model Coefficients（モデル係数）{#sub:regression-binom-coeff}
+*モデル係数*に関する設定を行います。
 
 ```{r regression-binom-coeff, fig.cap='**Model Coefficients**'}
 p <- image_read('imgs/04-regression-binom-coeff.png')
 p
 ```
 
-+ `r modelcoeff.omnibus_li`
-	- `r modelcoeff.omnibus.likelihood_li`
-+ `r modelcoeff.estimate.log_li`
-	- `r additional.ci_li`
-+ `r odds.ratio_li`
-	- `r odds.ratio.ratio_li`
-	- `r additional.ci_li`
++ **Omnibus Test**（オムニバス検定）　各説明変数についてオムニバス検定を行います。
+  - `r cbox()` Likelihood ratio tests（尤度比検定）　各説明変数の説明力が0でないかどうかを検定します。
++ **Estimate (Log Odds Ratio)**（推定値：対数オッズ比）　回帰係数の推定に関する設定を行います。
+  - `r cbox()` Confidence interval（信頼区間）　回帰係数の信頼区間を算出します。
+    - Interval [ &emsp; ] % 信頼区間の幅を指定します。
++ **Odds Ratio**（オッズ比）　各説明変数のオッズ比に関する設定を行います。
+  - `r cbox()` Odds ratio（オッズ比）　オッズ比を算出します。
+  - `r cbox()` Confidence interval（信頼区間）　オッズ比の信頼区間を算出します。
+    - Interval [ &emsp; ] % 信頼区間の幅を指定します。
 
-### Estimated Marginal Means（推定周辺平均）
-`r marginal_txt`
+### Estimated Marginal Means（推定周辺平均）{#sub:regression-binom-emm}
+各効果の*周辺平均値*（分析モデルに基づく平均値）の推定に関する設定を行います。
 
 ```{r regression-binom-marginal, fig.cap='**Estimated Marginal Means**'}
 p <- image_read('imgs/04-regression-binom-marginal.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location  = "+30+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+40")
 p
 ```
-```{r, results="asis"}
-cat(readLines('snippets/MarginalMeans-reg.md'), sep = '\n')
+
++ Marginal Means（周辺平均値）　周辺平均値の算出対象を指定します。
++ **General Options**（全般オプション）
+  - `r cbox(T)` Equal cell weights（均等重みづけ）
+  - `r cbox(T)` Confidence interval（信頼区間）　周辺平均値の信頼区間を算出します。
+    + Interval [ &emsp; ]% 信頼区間の幅を指定します。
+    
++ **Output**（出力）
+  - `r cbox(T)` Marginal means plots（周辺平均値のグラフ）　周辺平均値をグラフに示します。
+  - `r cbox()` Marginal means tables（周辺平均値の表）　周辺平均値を表に示します。
+
+### Prediction（予測）{#sub:regression-binom-prediction}
+モデルの予測精度に関する指標を算出します。
+
+```{r regression-binom-prediction, fig.cap='**Prediction**'}
+p <- image_read('imgs/04-regression-binom-prediction.png')
+p
 ```
 
++ **Cut-Off**（カットオフ）
+  - `r cbox()` Cut-off plot（カットオフ・プロット）　カットオフ値を変化させた場合の感度と特異値の関係を図示します
+  - Cut-off value [ &emsp; ]（カットオフ値）　カットオフ値を指定します
+
++ **Predictive Measures**（予測指標）
+  - `r cbox()` Classification table（分類表）　回帰モデルによる分類結果をクロス表に示します
+  - `r cbox()` Accuracy（精度）　モデルの精度を算出します
+  - `r cbox()` Specificity（特異度）　モデルの特異度を算出します
+  - `r cbox()` Sensitivity（感度）　モデルの感度を算出します
++ **ROC**
+  - `r cbox()` ROC curve（ROC曲線）　ROC曲線を図示します
+  - `r cbox()` AUC　ROC曲線の下の面積（AUC）を算出します
+
+### Save（保存）{#sub:regression-binom-save}
+分析結果を新たな変数として保存します。
+
+```{r regression-binom-save, fig.cap='**Save**'}
+p <- image_read('imgs/04-regression-linear-save.png')
+p
+```
+
++ `r cbox()` Predicted values（予測値）　回帰モデルによる予測値を変数として保存します。
++ `r cbox()` Residuals（残差）　回帰モデルの残差を変数として保存します。
++ `r cbox()` Cook's distance（クックの距離）　クックの距離を変数として保存します。
 
 ## N Outcomes [Multinomial]（多項ロジスティック回帰）{#sec:regression-multinom}
-*多項ロジスティック回帰*は，回帰モデルの目的変数が*名義型*変数で，その変数の取り得る値が３種類以上ある場合に使用される分析手法です。
+*多項ロジスティック回帰*は，回帰モデルの目的変数が「名義型（`r infig('variable-nominal')`）」で，その変数の取り得る値が３種類以上ある場合に使用される分析手法です。
 
 ```{r regression-multinom, fig.cap='**Logistic Regression**'}
 p <- image_read('imgs/04-regression-multinom.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
 p
 ```
 
-1. `r varlist_li`
-1. `r depvar.nom_li`
-1. `r covar.reg_li`
-1. `r factor.reg_li`
++ Dependent Variable（従属変数）　回帰分析に使用する目的変数を指定します。
 
-+ `r builder_li`
-+ `r reference_li`
-+ `r modelfit_li`
-+ `r modelcoeff_li`
-+ `r marginal_li`
++ Covariates（共変量）　回帰分析に使用する説明変数のうち，連続型（`r infig('variable-continuous')`）のものを指定します。
 
-### Model Builder（モデルビルダー）
-`r builder_txt`
++ Factors（要因）　回帰分析に使用する説明変数のうち，名義型（`r infig('variable-nominal')`）のものを指定します。
+
++ `r groupbar('Model Builder')`（モデルビルダー）　交互作用を含むモデルの作成や複数モデルの比較を行います。
++ `r groupbar('Reference Levels')`（基準レベル）　比較基準として用いる水準値を指定します。
++ `r groupbar('Model Fit')`（モデル適合度）　モデル適合度に関する設定を行います。
++ `r groupbar('Model Coefficients')`（モデル係数）　モデル係数に関する設定を行います。
++ `r groupbar('Estimated Marginal Means')`（推定周辺平均）　各効果の周辺平均値（回帰モデルによる推定値）に関する設定を行います。
+
+### Model Builder（モデルビルダー）{#sub:regression-multinom-builder}
+交互作用を含むモデルの作成や複数モデルの比較を行います。
+
 
 ```{r regression-multinom-builder, fig.cap='**Model Builder**'}
 p <- image_read('imgs/04-regression-multinom-builder.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
 p
 ```
 
-1. `r model.predictors_li`
-1. `r model.blocks_li`
-1. `r model.rarrow_li`
-1. `r model.triarrow_li`
++ Predictors（予測変数）　分析モデルに含まれる予測変数（説明変数）の一覧です。
++ Blocks（ブロック）　説明変数を組み合わせて分析モデルを作成します。
 
-### Reference Levels（参照水準）
-`r reference_txt`
+
+### Reference Levels（基準レベル）{#sub:regression-multinom-reference}
+
+分析において基準とする水準の値を設定します。
 
 ```{r regression-multinom-reference, fig.cap='**Reference Levels**'}
 p <- image_read('imgs/04-regression-multinom-reference.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
 p
 ```
 
-1. `r ref.var_li`
-1. `r ref.level_li`
++ Variable（変数）　名義型説明変数の一覧です。
++ Reference Level（基準レベル）　回帰係数を算出する際の基準レベルを指定します。
 
 
-### Model Fit（モデル適合度）
-`r modelfit_txt`
+### Model Fit（モデル適合度）{#sub:regression-multinom-modelfit}
+*モデル適合度*に関する設定を行います。
+
 
 ```{r regression-multinom-modelfit, fig.cap='**Model Fit**'}
 p <- image_read('imgs/04-regression-multinom-modelfit.png')
 p
 ```
 
-+ `r modelfit.measures_li`
-    - `r modelfit.measures.deviance_li`
-    - `r modelfit.measures.aic_li`
-    - `r modelfit.measures.bic_li`
-    - `r modelfit.measures.overall_li`
++ **Fit Measures**（モデル適合度）　モデル適合度の指標を指定します。
+  - `r cbox(T)` Deviance　逸脱度を算出します。
+  - `r cbox(T)` AIC　赤池情報量規準（AIC）を算出します。
+  - `r cbox()` BIC　ベイズ情報量規準（BIC）を算出します。
+  - `r cbox()` Overall model test（モデル全体の検定）　全体的なモデル適合度についての検定を行います。
 
-+ `r modelfit.pseudo.R2_li`
-    - `r modelfit.pseudo.R2.mcfadden_li`
-    - `r modelfit.pseudo.R2.cox_li`
-    - `r modelfit.pseudo.R2.nagelkerke_li`
++ **Pseudo R²**（擬似決定係数）　モデルのあてはまりの程度を標準化した値を算出します。
+  - `r cbox(T)` McFadden's R²（マクファデンのR²）　マクファデンの擬似決定係数を算出します。
+  - `r cbox()` Cox & Snell's R²（コックス=スネルのR²）　コックス＝スネルの擬似決定係数を算出します。
+  - `r cbox()` Nagelkerke's R²（ナゲルケルケのR²）　ナゲルケルケの擬似決定係数を算出します。
 
-### Model Coefficients（モデル係数）
-`r modelcoeff_txt`
+### Model Coefficients（モデル係数）{#sub:regression-multinom-coeff}
+*モデル係数*に関する設定を行います。
 
 ```{r regression-multinom-coeff, fig.cap='**Model Coefficients**'}
 p <- image_read('imgs/04-regression-multinom-coeff.png')
 p
 ```
 
-+ `r modelcoeff.omnibus_li`
-	- `r modelcoeff.omnibus.likelihood_li`
-+ `r modelcoeff.estimate.log_li`
-	- `r additional.ci_li`
-+ `r odds.ratio_li`
-	- `r odds.ratio.ratio_li`
-	- `r additional.ci_li`
++ **Omnibus Test**（オムニバス検定）　各説明変数についてオムニバス検定を行います。
+  - `r cbox()` Likelihood ratio tests（尤度比検定）　各説明変数の説明力が0でないかどうかを検定します。
++ **Estimate (Log Odds Ratio)**（推定値：対数オッズ比）　回帰係数の推定に関する設定を行います。
+  - `r cbox()` Confidence interval（信頼区間）　回帰係数の信頼区間を算出します。
+    - Interval [ &emsp; ] % 信頼区間の幅を指定します。
++ **Odds Ratio**（オッズ比）　各説明変数のオッズ比に関する設定を行います。
+  - `r cbox()` Odds ratio（オッズ比）　オッズ比を算出します。
+  - `r cbox()` Confidence interval（信頼区間）　オッズ比の信頼区間を算出します。
+    - Interval [ &emsp; ] % 信頼区間の幅を指定します。
 
-### Estimated Marginal Means（推定周辺平均）
-`r marginal_txt`
+
+### Estimated Marginal Means（推定周辺平均）{#sub:regression-multinom-emm}
+各効果の*周辺平均値*（分析モデルに基づく平均値）の推定に関する設定を行います。
+
 
 ```{r regression-multinom-marginal, fig.cap='**Estimated Marginal Means**'}
 p <- image_read('imgs/04-regression-multinom-marginal.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location  = "+30+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+40")
 p
 ```
-```{r, results="asis"}
-cat(readLines('snippets/MarginalMeans-reg.md'), sep = '\n')
-```
+
++ Marginal Means（周辺平均値）　周辺平均値の算出対象を指定します。
+
++ **General Options**（全般オプション）
+  - `r cbox(T)` Equal cell weights（均等重みづけ）
+  - `r cbox(T)` Confidence interval（信頼区間）　周辺平均値の信頼区間を算出します。
+    + Interval [ &emsp; ]% 信頼区間の幅を指定します。
+
++ **Output**（出力）
+  - `r cbox(T)` Marginal means plots（周辺平均値のグラフ）　周辺平均値をグラフに示します。
+  - `r cbox()` Marginal means tables（周辺平均値の表）　周辺平均値を表に示します。
 
 ## Ordinal Outcomes（順序ロジスティック回帰）{#sec:regression-ordinal}
 *順序ロジスティック回帰*は，回帰モデルの目的変数が*順序型*変数の場合に使用される分析手法です。
 
 ```{r regression-ordinal, fig.cap='**Logistic Regression**'}
 p <- image_read('imgs/04-regression-ordinal.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+12+55")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+60")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+280+120")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+280+240")
 p
 ```
 
-1. `r varlist_li`
-1. `r depvar.nom_li`
-1. `r covar.reg_li`
-1. `r factor.reg_li`
++ Dependent Variables（従属変数）　回帰分析に使用する目的変数を指定します。
 
-+ `r builder_li`
-+ `r reference_li`
-+ `r modelfit_li`
-+ `r modelcoeff_li`
++ Covariates（共変量）　回帰分析に使用する説明変数のうち，連続型（`r infig('variable-continuous')`）のものを指定します。
 
-### Model Builder（モデルビルダー）
-`r builder_txt`
++ Factors（要因）　回帰分析に使用する説明変数のうち，名義型（`r infig('variable-nominal')`）のものを指定します。
+
++ `r groupbar('Model Builder')`（モデルビルダー）　交互作用を含むモデルの作成や複数モデルの比較を行います。
++ `r groupbar('Reference Levels')`（基準レベル）　比較基準として用いる水準値を指定します。
++ `r groupbar('Model Fit')`（モデル適合度）　モデル適合度に関する設定を行います。
++ `r groupbar('Model Coefficients')`（モデル係数）　モデル係数に関する設定を行います。
+
+### Model Builder（モデルビルダー）{#sub:regression-ordinal-builder}
+交互作用を含むモデルの作成や複数モデルの比較を行います。
+
 
 ```{r regression-ordinal-builder, fig.cap='**Model Builder**'}
 p <- image_read('imgs/04-regression-ordinal-builder.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+8+32")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+343+32")
-p <- image_annotate(p,'③', size=14,color='red', font = 'Calibri',location = "+265+32")
-p <- image_annotate(p,'④', size=14,color='red', font = 'Calibri',location = "+265+113")
 p
 ```
 
-1. `r model.predictors_li`
-1. `r model.blocks_li`
-1. `r model.rarrow_li`
-1. `r model.triarrow_li`
++ Predictors（予測変数）　分析モデルに含まれる予測変数（説明変数）の一覧です。
++ Blocks（ブロック）　説明変数を組み合わせて分析モデルを作成します。
 
-### Reference Levels（参照水準）
-`r reference_txt`
+### Reference Levels（基準レベル）{#sub:regression-ordinal-reference}
+
+分析において基準とする水準の値を設定します。
+
 
 ```{r regression-ordinal-reference, fig.cap='**Reference Levels**'}
 p <- image_read('imgs/04-regression-ordinal-reference.png')
-p <- image_annotate(p,'①', size=14,color='red', font = 'Calibri',location = "+85+45")
-p <- image_annotate(p,'②', size=14,color='red', font = 'Calibri',location = "+280+45")
 p
 ```
 
-1. `r ref.var_li`
-1. `r ref.level_li`
++ Variable（変数）　名義型説明変数の一覧です。
++ Reference Level（基準レベル）　回帰係数を算出する際の基準レベルを指定します。
 
 
-### Model Fit（モデル適合度）
-`r modelfit_txt`
+### Model Fit（モデル適合度）{#sub:regression-ordinal-modelfit}
+*モデル適合度*に関する設定を行います。
+
 
 ```{r regression-ordinal-modelfit, fig.cap='**Model Fit**'}
 p <- image_read('imgs/04-regression-ordinal-modelfit.png')
 p
 ```
 
-+ `r modelfit.measures_li`
-    - `r modelfit.measures.deviance_li`
-    - `r modelfit.measures.aic_li`
-    - `r modelfit.measures.bic_li`
-    - `r modelfit.measures.overall_li`
++ **Fit Measures**（モデル適合度）　モデル適合度の指標を指定します。
+  - `r cbox(T)` Deviance　逸脱度を算出します。
+  - `r cbox(T)` AIC　赤池情報量規準（AIC）を算出します。
+  - `r cbox()` BIC　ベイズ情報量規準（BIC）を算出します。
+  - `r cbox()` Overall model test（モデル全体の検定）　全体的なモデル適合度についての検定を行います。
 
-+ `r modelfit.pseudo.R2_li`
-    - `r modelfit.pseudo.R2.mcfadden_li`
-    - `r modelfit.pseudo.R2.cox_li`
-    - `r modelfit.pseudo.R2.nagelkerke_li`
++ **Pseudo R²**（擬似決定係数）　モデルのあてはまりの程度を標準化した値を算出します。
+  - `r cbox(T)` McFadden's R²（マクファデンのR²）　マクファデンの擬似決定係数を算出します。
+  - `r cbox()` Cox & Snell's R²（コックス=スネルのR²）　コックス＝スネルの擬似決定係数を算出します。
+  - `r cbox()` Nagelkerke's R²（ナゲルケルケのR²）　ナゲルケルケの擬似決定係数を算出します。
 
-### Model Coefficients（モデル係数）
-`r modelcoeff_txt`
+### Model Coefficients（モデル係数）{#sub:regression-ordinal-coeff}
+*モデル係数*に関する設定を行います。
 
 ```{r regression-ordinal-coeff, fig.cap='**Model Coefficients**'}
 p <- image_read('imgs/04-regression-ordinal-coeff.png')
 p
 ```
 
-+ `r modelcoeff.omnibus_li`
-	- `r modelcoeff.omnibus.likelihood_li`
-+ `r modelcoeff.estimate.log_li`
-	- `r additional.ci_li`
-+ `r odds.ratio_li`
-	- `r odds.ratio.ratio_li`
-	- `r additional.ci_li`
++ **Omnibus Test**（オムニバス検定）　各説明変数についてオムニバス検定を行います。
+  - `r cbox()` Likelihood ratio tests（尤度比検定）　各説明変数の説明力が0でないかどうかを検定します。
+
++ **Thresholds**（閾値）　
+  - `r cbox()` Model thresholds（モデルの閾値）　分析モデルにおける切片の推定値を表示します。
+
+
++ **Estimate (Log Odds Ratio)**（推定値：対数オッズ比）　回帰係数の推定に関する設定を行います。
+  - `r cbox()` Confidence interval（信頼区間）　回帰係数の信頼区間を算出します。
+    - Interval [ &emsp; ] % 信頼区間の幅を指定します。
++ **Odds Ratio**（オッズ比）　各説明変数のオッズ比に関する設定を行います。
+  - `r cbox()` Odds ratio（オッズ比）　オッズ比を算出します。
+  - `r cbox()` Confidence interval（信頼区間）　オッズ比の信頼区間を算出します。
+    - Interval [ &emsp; ] % 信頼区間の幅を指定します。
+
+
 

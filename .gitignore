@@ -1,7 +1,4 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
+.R*
 .DS_Store
 _book
 _bookdown_files
